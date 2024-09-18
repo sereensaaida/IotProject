@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <title>IoT Dashboard</title>
+        <h1>IoT Dashboard</h1>
+
+        <script>
+            function controlLED(action){
+                fetch('/' + action, {method: 'POST'})
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('status').innerHTML = data;
+                });
+            }
+        </script>
+    </head>
+
+    <body>
+        <h1>Lighting</h1>
+    <button onclick="controlLED('turn_on')">Turn On LED</button>
+    <button onclick="controlLED('turn_off')">Turn Off LED</button>
+    <!----instead of p, image of lightbulb turned off and turned on-->
+    <img src="" alt="" width="500" height="600">
+    </body>
+</html>
