@@ -4,12 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phase 1 Project</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <h1>Project Phase 1</h1>
     <h2>Made by: Sereen Saaida, Manas Patel, Jayda Pizzuco</h2>
 
-    <div name=""></div>
+    <div class=".ImageSection">
+        <img id="switch" src="OffSwitch.jpg" alt="OffSwitch" onclick="switchImage()">
+        <img id="lightBulb" src="OffLightBulb.png" alt="OffLightBulb">
+    </div>
+
+    <script>
+//Storing all images into variables
+        image1 = "OffSwitch.jpg";
+        image2 = "OnSwitch.jpg";
+        image3 = "OffLightBulb.png";
+        image4 = "OnLightBulb.png";
+//storing Current img as image 1 to initialise
+        currentImage = image1;
+//method to change the images
+        function switchImage() {
+//first for the switch, when it is clicked, it will change the image src to the image that is NOT current
+            switchImg = document.getElementById('switch');
+            if (currentImage === image1) {
+                currentImage = image2;
+            } else {
+                currentImage = image1;
+            }
+            switchImg.src = currentImage;
+//second for the light, depending on what image the switch is, the light src will become ON or OFF
+            lightImg = document.getElementById('lightBulb');
+            if(currentImage == image1){
+                lightImg.src = image3;
+            } else {
+                lightImg.src = image4;
+            }
+        }
+    </script>
 
 </body>
 </html>
