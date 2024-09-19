@@ -20,7 +20,7 @@
         image1 = "OffSwitch.jpg";
         image2 = "OnSwitch.jpg";
         image3 = "OffLightBulb.png";
-        image4 = "OnLightBulb.png";
+        image4 = "OnlightBulb.png";
 //storing Current img as image 1 to initialise
         currentImage = image1;
 //method to change the images
@@ -29,8 +29,12 @@
             switchImg = document.getElementById('switch');
             if (currentImage === image1) {
                 currentImage = image2;
+                //pass turn_on as a value to the the function that sends the request to turn the LED on/off
+                controlLED('turn_on');
             } else {
                 currentImage = image1;
+                //pass turn_on as a value to the the function that sends the request to turn the LED on/off
+                controlLED('turn_off');
             }
             switchImg.src = currentImage;
 //second for the light, depending on what image the switch is, the light src will become ON or OFF
@@ -40,6 +44,24 @@
             } else {
                 lightImg.src = image4;
             }
+        }
+
+        function controlLED(state)
+        {
+            /*for the fetch request we will send the value (turn_on or turn_off) through post 
+            so the Flask server knows which operation to perfom */
+            fetch('/'+state,{
+                method: 'POST'})
+                // the response is the value returned by the server
+                .then(response => response.text())
+                // in the python code we return either ON or OFF after the turnOn and turnOff functions are called, we log these values in the console
+                .then(data => {
+                    console.log('Light Status: ' + data);
+        })
+        .catch(error => {
+            console.error('error : '+ error)
+        });
+            
         }
     </script>
 
