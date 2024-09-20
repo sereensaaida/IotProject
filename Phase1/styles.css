@@ -14,7 +14,7 @@ h1{
     width: 80%;
     transition: color 0.3s ease, transform 0.3s ease;
     box-shadow: 0px 0px 8px 0px #b92b2bd4;  
-    margin-bottom: 80px;
+    margin-bottom: 200px;
     border-radius: 10px;
     text-align: center;
 }
