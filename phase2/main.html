@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 2 Project</title>
+    <link rel="stylesheet" href="fan.css">
+</head>
+<body>
+    <h1>Project Phase 2</h1>
+
+    <div class="fan">
+        <img src="https://image.ibb.co/faCpXk/fangrid.png" class="grid" />
+        <div class="circle"></div>
+        <div class="body"></div>
+        <button class="onOff">Turn On</button>
+        <div class="bottom"></div>
+    </div>
+
+    <footer>
+        <p>Made by: Sereen Saaida, Manas Patel, Jayda Pizzuco</p>
+    </footer>
+
+    <script>
+        const circle = document.querySelector(".circle");
+        const button = document.querySelector(".onOff");
+        let isRunning = false;
+        let rotation = 0; // Tracking rotation angles
+
+        const startFan = () => {
+            isRunning = true;
+            button.textContent = "Turn Off";
+            rotation = 0; // Reset rotation
+           
+            // Start spinning the fan
+            timer = setInterval(() => {
+                rotation += 12; // rotation angle
+                circle.style.transform = `rotate(${rotation}deg)`; // Apply rotation
+            }, 16);
+        };
+
+        const stopFan = () => {
+            isRunning = false;
+            button.textContent = "Turn On";
+            clearInterval(timer); // Stop the spin
+            circle.style.transform = 'rotate(0deg)'; // Reset rotation
+        };
+
+        button.addEventListener('click', () => {
+            if (isRunning) {
+                stopFan();
+            } else {
+                startFan();
+            }
+        });
+
+    </script>
+
+</body>
+</html>
