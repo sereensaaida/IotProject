@@ -1,4 +1,4 @@
-from flask import Flask,send_from_directory,request
+from flask import Flask,send_from_directory,request,jsonify
 import time
 from Freenove_DHT import DHT
 import os
@@ -26,7 +26,7 @@ def read_temperature_and_humidity():
 # function to send the user an email if the temperature is more than 24 degrees celsius
 def send_email(temperature):
     to=["jpizzuco22@gmail.com"]
-    message="The current temperature is {}°C. Would you like to turn on the fan?"%(temperature)
+    message="The current temperature is %.2f °C. Would you like to turn on the fan?"%(temperature)
         
     email_id='testingthis2283@gmail.com'
     email_pass='gsyx yxmi rnaq lwud'
@@ -55,13 +55,13 @@ def serve_static(filename):
 #check temperature and send email if temperature is greater than 24 degrees celsius
 @app.route('/checktemperature')
 def check_temperature():
-    temperature_humidity = read_temperature_and_humidity();
+    temperature,humidity = read_temperature_and_humidity();
     
     if temperature is not None:
         if temperature > 24:
             send_email(temperature)
             
-        return ""%(temperature,humidity)
+        return jsonify({'temperature':temperature,'humidity': humidity})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001,debug=True,)
