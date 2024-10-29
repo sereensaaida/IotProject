@@ -3,6 +3,8 @@ import time
 from Freenove_DHT import DHT
 import os
 import smtplib
+import email
+import imaplib
 from email.message import EmailMessage
 
 
@@ -25,7 +27,7 @@ def read_temperature_and_humidity():
 
 # function to send the user an email if the temperature is more than 24 degrees celsius
 def send_email(temperature):
-    to=["jpizzuco22@gmail.com"]
+    to=["iotclient26@gmail.com"]
     message="The current temperature is %.2f °C. Would you like to turn on the fan?"%(temperature)
         
     email_id='testingthis2283@gmail.com'
@@ -41,7 +43,43 @@ def send_email(temperature):
             smtp.login(email_id,email_pass)
             smtp.send_message(msg)
             smtp.quit()
+            
+        
+#function to read emails TODO: check if yes has been replied
+def read_email():
+    email_id = 'iotclient26@gmail.com'
+    password = 'jzmo rdpf wbhb ixbp'
+    SERVER = 'imap.gmail.com'
 
+    mail = imaplib.IMAP4_SSL(SERVER)
+    mail.login(email_id, password)
+    mail.select('inbox')
+
+    #search for all emails
+    status, data = mail.search(None, 'ALL')
+    mail_ids = data[0].split()
+
+    #select last email in inbox
+    last_email_in_inbox = mail_ids[-1]
+    status, data = mail.fetch(last_email_in_inbox, '(RFC822)')
+    raw_email = data[0][1]
+
+    #parse email into a message object so we can read it
+    message = email.message_from_bytes(raw_email)
+    mail_from = message['from']
+    mail_subject = message['subject']
+
+    if message.is_multipart():
+                    mail_content = ''
+
+    for part in message.get_payload():
+                if part.get_content_type() == 'text/plain':
+                            mail_content += part.get_payload()
+                            
+    print(f'From: {mail_from}')
+    print(f'Subject: {mail_subject}')
+    print(f'Content: {mail_content}')
+    
 #set the root as the html file, put html file on Flask's server
 @app.route('/')
 def index():

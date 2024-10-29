@@ -13,6 +13,7 @@
     <h2 id = "temperature">Measuring Temperature...</h2>
     <h2 id = "humidity">Getting Humidity...</h2>
 
+
     <div class="fan">
         <img src="https://image.ibb.co/faCpXk/fangrid.png" class="grid" />
         <div class="circle"></div>
@@ -58,9 +59,10 @@
             }
         });
 
+
         //function to call the check temperature methods on the Flask app and retrieve the temp and humidity
-       // an email will also be sent to the usre if the temperature is > 24
-       //currently the email is hardcoded TODO: allow user to email??
+       // an email will also be sent to the user if the temperature is > 24
+       //currently the email is hardcoded TODO: allow user to enter email??
         function checkTemperature()
         {
             fetch('/checktemperature')
