@@ -5,6 +5,7 @@ import os
 import smtplib
 import email
 import imaplib
+import email.utils
 from email.message import EmailMessage
 
 
@@ -37,6 +38,7 @@ def send_email(temperature):
     msg['Subject']='Sending Email'
     msg['From']=email_id
     msg['To']= to
+    msg['Date']=   
     msg.set_content(message)
 
     with smtplib.SMTP_SSL('smtp.gmail.com',465)as smtp:
@@ -45,10 +47,10 @@ def send_email(temperature):
             smtp.quit()
             
         
-#function to read emails TODO: check if yes has been replied
+#function to read emails TODO: check if yes has been replied 
 def read_email():
-    email_id = 'iotclient26@gmail.com'
-    password = 'jzmo rdpf wbhb ixbp'
+    email_id = 'testingthis2283@gmail.com'
+    password = 'gsyx yxmi rnaq lwud'
     SERVER = 'imap.gmail.com'
 
     mail = imaplib.IMAP4_SSL(SERVER)
@@ -80,6 +82,10 @@ def read_email():
     print(f'Subject: {mail_subject}')
     print(f'Content: {mail_content}')
     
+    return mail_content;
+
+
+    
 #set the root as the html file, put html file on Flask's server
 @app.route('/')
 def index():
@@ -100,6 +106,16 @@ def check_temperature():
             send_email(temperature)
             
         return jsonify({'temperature':temperature,'humidity': humidity})
+    
+#read email and check if user has replied 'yes', turn on fan if they have
+@app.route('/turnonfan')
+def react_to_user_response():
+    email_content = read_email()
+    email_content = email_content.lower()
+    
+    if(email_content.__contains__("yes") or email_content.__contains__("y ") ):
+        #call python motor code
+        return "on"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001,debug=True,)
