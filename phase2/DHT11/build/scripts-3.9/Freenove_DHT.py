@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python
 #############################################################################
 # Filename    : Freenove_DHT.py
 # Description : DHT Temperature & Humidity Sensor library for Freenove

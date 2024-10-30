@@ -9,10 +9,16 @@
 <body>
     <h1>Project Phase 2</h1>
 
-    <!---TODO: display temperature abnd humidity using widgets-->
-    <h2 id = "temperature">Measuring Temperature...</h2>
-    <h2 id = "humidity">Getting Humidity...</h2>
-
+<!--gauge containers, one gauge for temperatue and one for humidity, beginning with value of 0, value gets modified as
+temperature is changed, which how much the gauge is filled-->
+    <div class="gauge-container">
+        <div id="temperature-gauge" class="gauge" style="--value: 0%;">
+            <span class="gauge-label" id="temperature-label">Loading Temperature</span>
+        </div>
+        <div id="humidity-gauge" class="gauge" style="--value: 0%;">
+            <span class="gauge-label" id="humidity-label">Loading humidity</span>
+        </div>
+    </div>
 
     <div class="fan">
         <img src="https://image.ibb.co/faCpXk/fangrid.png" class="grid" />
@@ -63,16 +69,21 @@
         //function to call the check temperature methods on the Flask app and retrieve the temp and humidity
        // an email will also be sent to the user if the temperature is > 24
        //currently the email is hardcoded TODO: allow user to enter email??
-        function checkTemperature()
-        {
+       function checkTemperature() {
             fetch('/checktemperature')
             .then(response => response.json())
             .then(data => {
-                document.getElementById("temperature").innerHTML = 'Current Temperature: ' + data.temperature +'°C';
-                document.getElementById("humidity").innerHTML = 'Current Humidity Level: '+ data.humidity +'%';
-            }
+                const temperatureValue = data.temperature;
+                const humidityValue = data.humidity;
 
-            )
+                //selecting temperature gauge and setting value of current temperature
+                document.getElementById("temperature-gauge").style.setProperty("--value", `${temperatureValue}%`);
+                document.getElementById("temperature-label").textContent = `${temperatureValue}°C`;
+
+                //selecting humidty gauge and setting value of current temperature
+                document.getElementById("humidity-gauge").style.setProperty("--value", `${humidityValue}%`);
+                document.getElementById("humidity-label").textContent = `${humidityValue}%`;
+            });
         }
 
         window.onload = checkTemperature;
