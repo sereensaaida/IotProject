@@ -6,6 +6,7 @@ import smtplib
 import email
 import imaplib
 from email.message import EmailMessage
+from motor import turn_on_fan
 
 
 app = Flask(__name__)
@@ -45,8 +46,8 @@ def send_email(temperature):
             smtp.quit()
             
         
-#function to read emails TODO: check if yes has been replied 
-def read_email():
+#function to read email, checks latest email in inbox for 'yes'
+def check_email_for_yes():
     email_id = 'testingthis2283@gmail.com'
     password = 'gsyx yxmi rnaq lwud'
     SERVER = 'imap.gmail.com'
@@ -80,19 +81,23 @@ def read_email():
     print(f'Subject: {mail_subject}')
     print(f'Content: {mail_content}')
     
-    return mail_content;
-
+    mail_content = mail_content.lower()
+    
+    if 'yes' in mail_content:
+        turn_on_fan()
+        return True
+    
 
     
 #set the root as the html file, put html file on Flask's server
 @app.route('/')
 def index():
-    return send_from_directory('../','main.html')
+    return send_from_directory('.','main.html')
 
 #serve the image files
 @app.route('/<path:filename>')
 def serve_static(filename):
-    return send_from_directory('../',filename)
+    return send_from_directory('.',filename)
 
 #check temperature and send email if temperature is greater than 24 degrees celsius
 @app.route('/checktemperature')
@@ -103,17 +108,20 @@ def check_temperature():
         if temperature > 24:
             send_email(temperature)
             
-        return jsonify({'temperature':temperature,'humidity': humidity})
-    
-#read email and check if user has replied 'yes', turn on fan if they have
-@app.route('/turnonfan')
-def react_to_user_response():
-    email_content = read_email()
-    email_content = email_content.lower()
-    
-    if(email_content.__contains__("yes") or email_content.__contains__("y ") ):
-        #call python motor code
-        return "on"
+            #wait 60 seconds before checking inbox
+            sleep(60)
+            
+            for i in range(10):
+                email_response = check_email_for_yes()
+                #method only returns a value if yes has beem found in the email
+                if email_response:
+                    #response is json array containing fan status that we need for the main.html
+                    return  jsonify({'temperature': temperature,'humidity': humidity,'fan_status': 'on'})
+                
+                sleep(10) #check again in 10 seconds
+                
+        return jsonify({'temperature':temperature,'humidity': humidity,'fan_status': 'off'})
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001,debug=True,)
