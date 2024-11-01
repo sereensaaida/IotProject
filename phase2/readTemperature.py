@@ -56,8 +56,8 @@ def check_email_for_yes():
     mail.login(email_id, password)
     mail.select('inbox')
 
-    #search for all emails
-    status, data = mail.search(None, 'ALL')
+    #search for unseen emails
+    status, data = mail.search(None,'(UNSEEN)')
     mail_ids = data[0].split()
 
     #select last email in inbox
@@ -113,7 +113,7 @@ def check_temperature():
             
             for i in range(10):
                 email_response = check_email_for_yes()
-                #method only returns a value if yes has beem found in the email
+                #method only returns True if yes has been found in the email
                 if email_response:
                     #response is json array containing fan status that we need for the main.html
                     return  jsonify({'temperature': temperature,'humidity': humidity,'fan_status': 'on'})
