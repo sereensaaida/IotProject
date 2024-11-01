@@ -8,6 +8,8 @@
 </head>
 <body>
     <h1>Project Phase 2</h1>
+    <h2 id = "temperature">Measuring Temperature...</h2>
+    <h2 id = "humidity">Getting Humidity...</h2>
 
 <!--gauge containers, one gauge for temperatue and one for humidity, beginning with value of 0, value gets modified as
 temperature is changed, which how much the gauge is filled-->
@@ -67,15 +69,21 @@ temperature is changed, which how much the gauge is filled-->
 
 
         //function to call the check temperature methods on the Flask app and retrieve the temp and humidity
-       // an email will also be sent to the user if the temperature is > 24
-       //currently the email is hardcoded TODO: allow user to enter email??
        function checkTemperature() {
             fetch('/checktemperature')
             .then(response => response.json())
             .then(data => {
-                const temperatureValue = data.temperature;
-                const humidityValue = data.humidity;
+                //const temperatureValue = data.temperature;
+                //const humidityValue = data.humidity;
 
+                document.getElementById("temperature").innerHTML = 'Current Temperature: ' + data.temperature +'°C';
+                document.getElementById("humidity").innerHTML = 'Current Humidity Level: '+ data.humidity +'%';
+                
+                //if temperature is greater than 24 degrees, send email
+                if(parseFloat(data.temperature)> 24.0){
+                    sendEmail();
+                }
+                /*
                 //selecting temperature gauge and setting value of current temperature
                 document.getElementById("temperature-gauge").style.setProperty("--value", `${temperatureValue}%`);
                 document.getElementById("temperature-label").textContent = `${temperatureValue}°C`;
@@ -83,6 +91,15 @@ temperature is changed, which how much the gauge is filled-->
                 //selecting humidty gauge and setting value of current temperature
                 document.getElementById("humidity-gauge").style.setProperty("--value", `${humidityValue}%`);
                 document.getElementById("humidity-label").textContent = `${humidityValue}%`;
+            */
+                });
+        }
+
+        function sendEmail() {
+            fetch('/sendemail')
+            .then(response => response.json())
+            .then(data => {
+                //use data.fan_status to update fan css
             });
         }
 

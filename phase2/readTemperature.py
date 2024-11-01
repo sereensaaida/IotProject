@@ -12,6 +12,7 @@ from motor import turn_on_fan
 app = Flask(__name__)
 
 DHTPin = 17     #define the pin of DHT11
+latest_temperature = None
 
 # function to read temperature and humidity using DHT11
 def read_temperature_and_humidity():
@@ -44,6 +45,8 @@ def send_email(temperature):
             smtp.login(email_id,email_pass)
             smtp.send_message(msg)
             smtp.quit()
+            
+    print('email sent')
             
         
 #function to read email, checks latest email in inbox for 'yes'
@@ -99,29 +102,35 @@ def index():
 def serve_static(filename):
     return send_from_directory('.',filename)
 
-#check temperature and send email if temperature is greater than 24 degrees celsius
+#check temperature and send it to the dahsboard
 @app.route('/checktemperature')
 def check_temperature():
+    global latest_temperature
     temperature,humidity = read_temperature_and_humidity();
     
     if temperature is not None:
-        if temperature > 24:
-            send_email(temperature)
-            
-            #wait 60 seconds before checking inbox
-            sleep(60)
-            
-            for i in range(10):
-                email_response = check_email_for_yes()
-                #method only returns True if yes has been found in the email
-                if email_response:
-                    #response is json array containing fan status that we need for the main.html
-                    return  jsonify({'temperature': temperature,'humidity': humidity,'fan_status': 'on'})
-                
-                sleep(10) #check again in 10 seconds
-                
+        latest_temperature = temperature
         return jsonify({'temperature':temperature,'humidity': humidity,'fan_status': 'off'})
 
+#send email if temperature is greater than 24 degrees celsius and check for  response to the email
+#if a response to the email has been found then tell the dashboard that the fan has been turned on
+@app.route('/sendemail')
+def send_email_check_for_response():
+    print(latest_temperature)
+    send_email(latest_temperature)
+            
+    #wait 60 seconds before checking inbox
+    time.sleep(60)
+            
+    for i in range(10):
+        email_response = check_email_for_yes()
+        #method only returns True if yes has been found in the email
+        if email_response:
+              #response is json array containing fan status that we need for the main.html
+              return  jsonify({'fan_status': 'on'})
+                
+    time.sleep(10) #check again in 10 seconds
+                
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001,debug=True,)

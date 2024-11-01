@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 from time import sleep
 
 def turn_on_fan():
+    print('fan turning on')
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
 
