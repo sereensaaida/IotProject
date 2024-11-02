@@ -7,28 +7,116 @@
     <link rel="stylesheet" href="fan.css">
 </head>
 <body>
-    <h1>Project Phase 2</h1>
-    <h2 id = "temperature">Measuring Temperature...</h2>
-    <h2 id = "humidity">Getting Humidity...</h2>
+
+   <h1>Project Phase 2</h1>
+   <h2 id = "humidity"><br>Getting Humidity...</h2>
+
+    <h2 >Measuring Temperature...</h2>
 
 <!--gauge containers, one gauge for temperatue and one for humidity, beginning with value of 0, value gets modified as
 temperature is changed, which how much the gauge is filled-->
-    <div class="gauge-container">
-        <div id="temperature-gauge" class="gauge" style="--value: 0%;">
-            <span class="gauge-label" id="temperature-label">Loading Temperature</span>
-        </div>
-        <div id="humidity-gauge" class="gauge" style="--value: 0%;">
-            <span class="gauge-label" id="humidity-label">Loading humidity</span>
-        </div>
+<div class="gauge-container">
+<div id="humidity-gauge">
+    <div id="major-ticks">
+        <span>10℃</span>
+        <span>20℃</span>
+        <span>30℃</span>
     </div>
+    <div id="minor-ticks">
+        <span title="--i:1"></span>
+        <span title="--i:2"></span>
+        <span title="--i:3"></span>
+        <span title="--i:4"></span>
+        <span title="--i:5"></span>
+        <span title="--i:6"></span>
+        <span title="--i:7"></span>
+        <span title="--i:8"></span>
+        <span title="--i:9"></span>
+        <span title="--i:10"></span>
+        <span title="--i:11"></span>
+        <span title="--i:12"></span>
+        <span title="--i:13"></span>
+        <span title="--i:14"></span>
+        <span title="--i:15"></span>
+        <span title="--i:16"></span>
+        <span title="--i:17"></span>
+        <span title="--i:18"></span>
+        <span title="--i:19"></span>
+        <span title="--i:20"></span>
+    </div>
+    <div id="minor-ticks-bottom-mask"></div>
+    <div id="bottom-circle"></div>
+    <svg version="1.1" baseProfile="full" width="190" height="190" xmlns="http://www.w3.org/2000/svg">
+        <linearGradient id="gradient" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stop-color="#b96e85"/>
+            <stop offset="100%" stop-color="#ae69bb"/>
+        </linearGradient>
+        <path d="M5 95 A80 80 0 0 1 185 95" stroke=url(#gradient) fill="none" stroke-width="10"
+        stroke-linecap="round" stroke-dasharray="0 282.78"/>
+    </svg>
+    <div id="center-circle">
+        <span id="name">HUMIDITY</span>
+        <span id="humidity">10</span>
+        <img src="leaf.svg" alt="">
+    </div>
+</div>
 
+<div id="temperature-gauge">
+    <div id="major-ticks">
+        <span>10℃</span>
+        <span>20℃</span>
+        <span>30℃</span>
+    </div>
+    <div id="minor-ticks">
+        <span title="--i:1"></span>
+        <span title="--i:2"></span>
+        <span title="--i:3"></span>
+        <span title="--i:4"></span>
+        <span title="--i:5"></span>
+        <span title="--i:6"></span>
+        <span title="--i:7"></span>
+        <span title="--i:8"></span>
+        <span title="--i:9"></span>
+        <span title="--i:10"></span>
+        <span title="--i:11"></span>
+        <span title="--i:12"></span>
+        <span title="--i:13"></span>
+        <span title="--i:14"></span>
+        <span title="--i:15"></span>
+        <span title="--i:16"></span>
+        <span title="--i:17"></span>
+        <span title="--i:18"></span>
+        <span title="--i:19"></span>
+        <span title="--i:20"></span>
+    </div>
+    <div id="minor-ticks-bottom-mask"></div>
+    <div id="bottom-circle"></div>
+    <svg version="1.1" baseProfile="full" width="190" height="190" xmlns="http://www.w3.org/2000/svg">
+        <linearGradient id="gradient" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stop-color="#b96e85"/>
+            <stop offset="100%" stop-color="#ae69bb"/>
+        </linearGradient>
+        <path d="M5 95 A80 80 0 0 1 185 95" stroke=url(#gradient) fill="none" stroke-width="10"
+        stroke-linecap="round" stroke-dasharray="0 282.78"/>
+    </svg>
+    <div id="center-circle">
+        <span id="name">TEMPERATURE</span>
+        <span id="temperature">10</span>
+        <img src="leaf.svg" alt="">
+    </div>
+</div>
+</div>
+</div>
+
+<div class="fan-container">
     <div class="fan">
-        <img src="https://image.ibb.co/faCpXk/fangrid.png" class="grid" />
         <div class="circle"></div>
         <div class="body"></div>
         <button class="onOff">Turn On</button>
         <div class="bottom"></div>
     </div>
+</div>
+
 
     <footer>
         <p>Made by: Sereen Saaida, Manas Patel, Jayda Pizzuco</p>
@@ -68,34 +156,51 @@ temperature is changed, which how much the gauge is filled-->
         });
 
 
-        //function to call the check temperature methods on the Flask app and retrieve the temp and humidity
-       function checkTemperature() {
-            fetch('/checktemperature')
-            .then(response => response.json())
-            .then(data => {
-                //const temperatureValue = data.temperature;
-                //const humidityValue = data.humidity;
+//function to call the check temperature methods on the Flask app and retrieve the temp and humidity
+    function checkTemperature() {
+    fetch('/checktemperature') 
+        .then(response => response.json())
+        .then(data => {
+            const temperatureArc = document.querySelector("#temperature-gauge svg path");
+            const humidityArc = document.querySelector("#humidity-gauge svg path");
 
-                document.getElementById("temperature").innerHTML = 'Current Temperature: ' + data.temperature +'°C';
-                document.getElementById("humidity").innerHTML = 'Current Humidity Level: '+ data.humidity +'%';
-                
-                //if temperature is greater than 24 degrees, send email
-                if(parseFloat(data.temperature)> 24.0){
-                    sendEmail();
-                }
-                /*
-                //selecting temperature gauge and setting value of current temperature
-                document.getElementById("temperature-gauge").style.setProperty("--value", `${temperatureValue}%`);
-                document.getElementById("temperature-label").textContent = `${temperatureValue}°C`;
+            const temperatureElement = document.querySelector("#temperature");
+            const humidityElement = document.querySelector("#humidity");
 
-                //selecting humidty gauge and setting value of current temperature
-                document.getElementById("humidity-gauge").style.setProperty("--value", `${humidityValue}%`);
-                document.getElementById("humidity-label").textContent = `${humidityValue}%`;
-            */
-                });
-        }
+            temperatureElement.textContent = data.temperature;
+            humidityElement.textContent = data.humidity;
+
+            // Define arc length calculations for each gauge
+            const temperatureArcLength = temperatureArc.getTotalLength();
+            const humidityArcLength = humidityArc.getTotalLength();
+
+            // Define the max/min values for the ranges
+            const tempMax = 40; 
+            const tempMin = 0;  
+            const humidityMax = 100; 
+            const humidityMin = 0; 
+
+            const tempStep = temperatureArcLength / (tempMax - tempMin);
+            const humidityStep = humidityArcLength / (humidityMax - humidityMin);
+
+            // Calculate stroke dash values for each gauge
+            const temperatureValue = (data.temperature - tempMin) * tempStep;
+            const humidityValue = (data.humidity - humidityMin) * humidityStep;
+
+            // Set stroke dash array to control gauge fill
+            temperatureArc.style.strokeDasharray = `${temperatureValue} ${temperatureArcLength - temperatureValue}`;
+            humidityArc.style.strokeDasharray = `${humidityValue} ${humidityArcLength - humidityValue}`;
+        });
+}
+
+// Call updateGauges periodically or on an event
+setInterval(checkTemperature , 500); // Update every 0.5 seconds
+
 
         function sendEmail() {
+            if(parseFloat(data.temperature)> 24.0){
+                    sendEmail();
+                }
             fetch('/sendemail')
             .then(response => response.json())
             .then(data => {
