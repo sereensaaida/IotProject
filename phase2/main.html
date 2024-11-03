@@ -125,6 +125,11 @@ temperature is changed, which how much the gauge is filled-->
             temperatureElement.textContent = data.temperature;
             humidityElement.textContent = data.humidity;
 
+            //if temperature is greater than 24 degrees send email
+            if(parseFloat(data.temperature)> 24.0){
+                    sendEmail();
+                }
+
             // Define arc length calculations for each gauge
             const temperatureArcLength = temperatureArc.getTotalLength();
             const humidityArcLength = humidityArc.getTotalLength();
@@ -151,11 +156,7 @@ temperature is changed, which how much the gauge is filled-->
 // Call updateGauges periodically or on an event
 setInterval(checkTemperature , 500); // Update every 0.5 seconds
 
-
         function sendEmail() {
-            if(parseFloat(data.temperature)> 24.0){
-                    sendEmail();
-                }
             fetch('/sendemail')
             .then(response => response.json())
             .then(data => {
