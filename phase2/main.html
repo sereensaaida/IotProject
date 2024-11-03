@@ -80,6 +80,11 @@ temperature is changed, which how much the gauge is filled-->
         let emailSent = false; // Track if an email was already sent
         let circle = document.querySelector('.circle');
     
+        /**
+         * Starts the fan by setting the isRunning flag to true, 
+         * setting the fan's rotation to 0 degrees, and 
+         * setting up an interval timer to rotate the fan every 16 milliseconds.
+         */
         const startFan = () => {
             isRunning = true;
             rotation = 0;
@@ -89,12 +94,24 @@ temperature is changed, which how much the gauge is filled-->
             }, 16);
         };
     
+
+/**
+ * Stops the fan by clearing the interval timer, 
+ * resetting the rotation of the fan circle to 0 degrees,
+ * and updating the isRunning flag.
+ */
         const stopFan = () => {
             isRunning = false;
             clearInterval(timer);
             circle.style.transform = 'rotate(0deg)';
         };
     
+        /**
+         * Updates the fan status based on the received fan status from the server.
+         * If the fan status is "on" and the fan is not running, start the fan.
+         * If the fan status is "off" and the fan is running, stop the fan.
+         * @param {string} fanStatus - The fan status from the server, either "on" or "off".
+         */
         function updateFanStatus(fanStatus) {
             if (fanStatus === "on" && !isRunning) {
                 startFan();
@@ -102,7 +119,18 @@ temperature is changed, which how much the gauge is filled-->
                 stopFan();
             }
         }
-    
+        
+/*************  ✨ Codeium Command ⭐  *************/
+/**
+ * Fetches temperature and humidity data from the server and updates the UI.
+ * - Updates the text content of temperature and humidity elements.
+ * - Checks if the temperature exceeds 24°C to trigger an email.
+ * - Updates the fan status based on the server response.
+ * - Adjusts the stroke dash array of temperature and humidity arcs to visually
+ *   represent the current values.
+ */
+/******  d80a65d5-92e3-4a51-8983-5399e0bad0ec  *******/    
+
         function checkTemperature() {
             fetch('/checktemperature') 
                 .then(response => response.json())
@@ -141,6 +169,11 @@ temperature is changed, which how much the gauge is filled-->
                 });
         }
     
+/**
+ * Sends a request to the server to trigger an email sending process.
+ * Upon receiving a response, updates the fan status based on the 
+ * 'fan_status' field in the returned data.
+ */
         function sendEmail() {
             fetch('/sendemail')
             .then(response => response.json())
