@@ -76,29 +76,25 @@ temperature is changed, which how much the gauge is filled-->
     </footer>
 
     <script>
-        const circle = document.querySelector(".circle");
         let isRunning = false;
-        let rotation = 0; // Tracking rotation angles
-        let timer;
-
+        let emailSent = false; // Track if an email was already sent
+        let circle = document.querySelector('.circle');
+    
         const startFan = () => {
             isRunning = true;
-            rotation = 0; // Reset rotation
-           
-            // Start spinning the fan
+            rotation = 0;
             timer = setInterval(() => {
-                rotation += 12; // rotation angle
-                circle.style.transform = `rotate(${rotation}deg)`; // Apply rotation
+                rotation += 12;
+                circle.style.transform = `rotate(${rotation}deg)`;
             }, 16);
         };
-
+    
         const stopFan = () => {
             isRunning = false;
-            clearInterval(timer); // Stop the spin
-            circle.style.transform = 'rotate(0deg)'; // Reset rotation
+            clearInterval(timer);
+            circle.style.transform = 'rotate(0deg)';
         };
-
-        // Function to update fan status based on JSON data
+    
         function updateFanStatus(fanStatus) {
             if (fanStatus === "on" && !isRunning) {
                 startFan();
@@ -106,53 +102,60 @@ temperature is changed, which how much the gauge is filled-->
                 stopFan();
             }
         }
-
-        // Function to call the check temperature methods on the Flask app and retrieve the temp, humidity, and fan status
+    
         function checkTemperature() {
             fetch('/checktemperature') 
                 .then(response => response.json())
                 .then(data => {
                     const temperatureArc = document.querySelector("#temperature-gauge svg path");
                     const humidityArc = document.querySelector("#humidity-gauge svg path");
-
-                    const temperatureElement = document.querySelector("#temperature");
-                    const humidityElement = document.querySelector("#humidity");
-
-                    temperatureElement.textContent = data.temperature;
-                    humidityElement.textContent = data.humidity;
-
-                    // Update fan status based on JSON response
+    
+                    document.querySelector("#temperature").textContent = data.temperature;
+                    document.querySelector("#humidity").textContent = data.humidity;
+    
+                    if (parseFloat(data.temperature) > 24.0 && !emailSent) {
+                        emailSent = true;
+                        sendEmail();
+                    } else if (parseFloat(data.temperature) <= 24.0) {
+                        emailSent = false;
+                    }
+    
                     updateFanStatus(data.fan_status);
-
-                    // Define arc length calculations for each gauge
+    
                     const temperatureArcLength = temperatureArc.getTotalLength();
                     const humidityArcLength = humidityArc.getTotalLength();
-
-                    // Define the max/min values for the ranges
+    
                     const tempMax = 40; 
                     const tempMin = 0;  
                     const humidityMax = 100; 
                     const humidityMin = 0; 
-
+    
                     const tempStep = temperatureArcLength / (tempMax - tempMin);
                     const humidityStep = humidityArcLength / (humidityMax - humidityMin);
-
-                    // Calculate stroke dash values for each gauge
+    
                     const temperatureValue = (data.temperature - tempMin) * tempStep;
                     const humidityValue = (data.humidity - humidityMin) * humidityStep;
-
-                    // Set stroke dash array to control gauge fill
+    
                     temperatureArc.style.strokeDasharray = `${temperatureValue} ${temperatureArcLength - temperatureValue}`;
                     humidityArc.style.strokeDasharray = `${humidityValue} ${humidityArcLength - humidityValue}`;
                 });
         }
-
-        // Call checkTemperature periodically
-        setInterval(checkTemperature, 500); // Update every 0.5 seconds
-
-        // Initial call on page load
+    
+        function sendEmail() {
+            fetch('/sendemail')
+            .then(response => response.json())
+            .then(data => {
+                if (data.fan_status) {
+                    updateFanStatus(data.fan_status);
+                }
+            });
+        }
+    
+        setInterval(checkTemperature, 500);
+    
         window.onload = checkTemperature;
     </script>
+    
 
 </body>
 </html>
