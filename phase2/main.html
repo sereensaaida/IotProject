@@ -61,13 +61,11 @@ temperature is changed, which how much the gauge is filled-->
     </div>
 </div>
 </div>
-</div>
 
 <div class="fan-container">
     <div class="fan">
         <div class="circle"></div>
         <div class="body"></div>
-        <button class="onOff">Turn On</button>
         <div class="bottom"></div>
     </div>
 </div>
@@ -79,13 +77,12 @@ temperature is changed, which how much the gauge is filled-->
 
     <script>
         const circle = document.querySelector(".circle");
-        const button = document.querySelector(".onOff");
         let isRunning = false;
         let rotation = 0; // Tracking rotation angles
+        let timer;
 
         const startFan = () => {
             isRunning = true;
-            button.textContent = "Turn Off";
             rotation = 0; // Reset rotation
            
             // Start spinning the fan
@@ -97,72 +94,63 @@ temperature is changed, which how much the gauge is filled-->
 
         const stopFan = () => {
             isRunning = false;
-            button.textContent = "Turn On";
             clearInterval(timer); // Stop the spin
             circle.style.transform = 'rotate(0deg)'; // Reset rotation
         };
 
-        button.addEventListener('click', () => {
-            if (isRunning) {
-                stopFan();
-            } else {
+        // Function to update fan status based on JSON data
+        function updateFanStatus(fanStatus) {
+            if (fanStatus === "on" && !isRunning) {
                 startFan();
+            } else if (fanStatus === "off" && isRunning) {
+                stopFan();
             }
-        });
-
-
-//function to call the check temperature methods on the Flask app and retrieve the temp and humidity
-    function checkTemperature() {
-    fetch('/checktemperature') 
-        .then(response => response.json())
-        .then(data => {
-            const temperatureArc = document.querySelector("#temperature-gauge svg path");
-            const humidityArc = document.querySelector("#humidity-gauge svg path");
-
-            const temperatureElement = document.querySelector("#temperature");
-            const humidityElement = document.querySelector("#humidity");
-
-            temperatureElement.textContent = data.temperature;
-            humidityElement.textContent = data.humidity;
-
-            // Define arc length calculations for each gauge
-            const temperatureArcLength = temperatureArc.getTotalLength();
-            const humidityArcLength = humidityArc.getTotalLength();
-
-            // Define the max/min values for the ranges
-            const tempMax = 40; 
-            const tempMin = 0;  
-            const humidityMax = 100; 
-            const humidityMin = 0; 
-
-            const tempStep = temperatureArcLength / (tempMax - tempMin);
-            const humidityStep = humidityArcLength / (humidityMax - humidityMin);
-
-            // Calculate stroke dash values for each gauge
-            const temperatureValue = (data.temperature - tempMin) * tempStep;
-            const humidityValue = (data.humidity - humidityMin) * humidityStep;
-
-            // Set stroke dash array to control gauge fill
-            temperatureArc.style.strokeDasharray = `${temperatureValue} ${temperatureArcLength - temperatureValue}`;
-            humidityArc.style.strokeDasharray = `${humidityValue} ${humidityArcLength - humidityValue}`;
-        });
-}
-
-// Call updateGauges periodically or on an event
-setInterval(checkTemperature , 500); // Update every 0.5 seconds
-
-
-        function sendEmail() {
-            if(parseFloat(data.temperature)> 24.0){
-                    sendEmail();
-                }
-            fetch('/sendemail')
-            .then(response => response.json())
-            .then(data => {
-                //use data.fan_status to update fan css
-            });
         }
 
+        // Function to call the check temperature methods on the Flask app and retrieve the temp, humidity, and fan status
+        function checkTemperature() {
+            fetch('/checktemperature') 
+                .then(response => response.json())
+                .then(data => {
+                    const temperatureArc = document.querySelector("#temperature-gauge svg path");
+                    const humidityArc = document.querySelector("#humidity-gauge svg path");
+
+                    const temperatureElement = document.querySelector("#temperature");
+                    const humidityElement = document.querySelector("#humidity");
+
+                    temperatureElement.textContent = data.temperature;
+                    humidityElement.textContent = data.humidity;
+
+                    // Update fan status based on JSON response
+                    updateFanStatus(data.fan_status);
+
+                    // Define arc length calculations for each gauge
+                    const temperatureArcLength = temperatureArc.getTotalLength();
+                    const humidityArcLength = humidityArc.getTotalLength();
+
+                    // Define the max/min values for the ranges
+                    const tempMax = 40; 
+                    const tempMin = 0;  
+                    const humidityMax = 100; 
+                    const humidityMin = 0; 
+
+                    const tempStep = temperatureArcLength / (tempMax - tempMin);
+                    const humidityStep = humidityArcLength / (humidityMax - humidityMin);
+
+                    // Calculate stroke dash values for each gauge
+                    const temperatureValue = (data.temperature - tempMin) * tempStep;
+                    const humidityValue = (data.humidity - humidityMin) * humidityStep;
+
+                    // Set stroke dash array to control gauge fill
+                    temperatureArc.style.strokeDasharray = `${temperatureValue} ${temperatureArcLength - temperatureValue}`;
+                    humidityArc.style.strokeDasharray = `${humidityValue} ${humidityArcLength - humidityValue}`;
+                });
+        }
+
+        // Call checkTemperature periodically
+        setInterval(checkTemperature, 500); // Update every 0.5 seconds
+
+        // Initial call on page load
         window.onload = checkTemperature;
     </script>
 
