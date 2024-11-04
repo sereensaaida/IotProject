@@ -10,7 +10,7 @@ from motor import turn_on_fan  # Assuming `motor.py` has the function to control
 
 app = Flask(__name__)
 
-DHTPin = 17  # Define the pin of DHT11
+DHTPin = 18  # Define the pin of DHT11
 latest_temperature = None
 
 # Function to read temperature and humidity using DHT11
@@ -116,7 +116,7 @@ def check_temperature():
 @app.route('/sendemail')
 def send_email_check_for_response():
     global latest_temperature
-    
+    print(latest_temperature)
     # Send an email if temperature is above the threshold
     if latest_temperature is not None and latest_temperature > 24:
         send_email(latest_temperature)

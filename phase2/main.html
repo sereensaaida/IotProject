@@ -148,7 +148,7 @@ temperature is changed, which how much the gauge is filled-->
                         emailSent = false;
                     }
     
-                    updateFanStatus(data.fan_status);
+                    // updateFanStatus(data.fan_status);
     
                     const temperatureArcLength = temperatureArc.getTotalLength();
                     const humidityArcLength = humidityArc.getTotalLength();
@@ -184,7 +184,7 @@ temperature is changed, which how much the gauge is filled-->
             });
         }
     
-        setInterval(checkTemperature, 500);
+        setInterval(checkTemperature, 1000);
     
         window.onload = checkTemperature;
     </script>
