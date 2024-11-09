@@ -5,8 +5,9 @@ app = Flask(__name__)
 
 # set GPIO pin 18 to output
 GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 LED= 18
-GPIO.setup(LED, GPIO.OUT)
+GPIO.setup(LED, GPIO.OUT, initial=GPIO.LOW)
 
 #set the root as the html file, put html file on Flask's server
 @app.route('/')
