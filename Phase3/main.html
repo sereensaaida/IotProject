@@ -18,30 +18,59 @@
        <div class="dashboard">
            <h1>Light Dashboard</h1>
    
-           <!-- Light Intensity Section -->
+           
            <div class="intensity">
-               <div class="icon">💡</div>
+               <div class="icon" id="lightBulb">💡</div>
+               <input type="range" min="0" max="1" step="0.01" value="0.5" class="slider" id="brightnessSlider" disabled>
                <div class="label">Light Intensity</div>
-               <div class="value" id="intensity-value">75%</div> <!-- Placeholder for intensity -->
+               <div class="value" id="intensity-value">0%</div> 
            </div>
    
-           <!-- Light Status Section -->
            <div class="status">
                <div class="icon">🔆</div>
                <div class="label">Light Status</div>
-               <div class="value" id="status-value">On</div> <!-- Placeholder for status -->
+               <div class="value" id="status-value">Off</div> 
            </div>
    
-           <!-- Email Sent Message Section -->
            <div class="email">
                <div class="icon">📧</div>
-               <div class="label">Notification</div>
-               <div class="value" id="email-message">Email has been sent</div> <!-- Placeholder for email message -->
+               <div class="label">Email Status</div>
+               <div class="value" id="email-message">no email yet...</div> 
            </div>
+          
+       
+    
+        <script>
+
+        function sendEmail() {
+            fetch('/sendemail')
+            .then(response => response.json());
+            const emailMsg = document.getElementById("email-message");
+            emailMsg.textContent = "Email has been sent!"
+        }
+
+        function setIntensity() {
+            fetch('/setIntensity') 
+                .then(response => response.json())
+                .then(data => {
+                    const slider = document.getElementById("brightnessSlider");
+                    const intensityValue = document.getElementById("intensity-value");
+                    slider.value = data.intensity;
+                    intensityValue.value = data.intensity;
+                    if (parseFloat(data.intensity) < 400 && !emailSent) {
+                        emailSent = true;
+                        sendEmail();
+                    } else if (parseFloat(data.intensity) >= 400) {
+                        emailSent = false;
+                    }
+                });
+        }
+
+        setBrightness(0.8); 
+        </script>
        </div>
    </body>
 
-   
 
     <footer>
         <p>Made by: Sereen Saaida, Manas Patel, Jayda Pizzuco</p>
