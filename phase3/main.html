@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 3 Project</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+   <h1>Project Phase 3</h1>
+
+
+
+
+    <footer>
+        <p>Made by: Sereen Saaida, Manas Patel, Jayda Pizzuco</p>
+    </footer>
+
+    <script>
+        let led_status = off;
+        let email_sent = false;
+
+        function getLight() {
+            fetch('/light')
+            .then(response => response.json())
+            .then(data => {
+                //if light intensity is less than 400 turn on light
+                if (parseFloat(data.light_intensity) < 400) {
+                    turnOnLED();
+                }
+            });
+        }
+        
+        function turnOnLED()
+        {
+            fetch('/led')
+            .then(response => response.json())
+            .then(data => {
+                led_status = data.led_status;
+                email_sent = data.email_sent;
+            });
+        }
+
+    
+        window.onload = getLight;
+    </script>
+    
+
+</body>
+</html>
