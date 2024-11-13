@@ -4,72 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phase 3 Project</title>
-    <link rel="stylesheet" href="phase3.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
    <h1>Project Phase 3</h1>
-   <!DOCTYPE html>
-   <html lang="en">
-   
-       
-   </head>
-   <body>
-       <div class="dashboard">
-           <h1>Light Dashboard</h1>
-   
-           
-           <div class="intensity">
-               <div class="icon" id="lightBulb">💡</div>
-               <input type="range" min="0" max="1" step="0.01" value="0.5" class="slider" id="brightnessSlider" disabled>
-               <div class="label">Light Intensity</div>
-               <div class="value" id="intensity-value">0%</div> 
-           </div>
-   
-           <div class="status">
-               <div class="icon">🔆</div>
-               <div class="label">Light Status</div>
-               <div class="value" id="status-value">Off</div> 
-           </div>
-   
-           <div class="email">
-               <div class="icon">📧</div>
-               <div class="label">Email Status</div>
-               <div class="value" id="email-message">no email yet...</div> 
-           </div>
-          
-       
-    
-        <script>
 
-        function sendEmail() {
-            fetch('/sendemail')
-            .then(response => response.json());
-            const emailMsg = document.getElementById("email-message");
-            emailMsg.textContent = "Email has been sent!"
-        }
 
-        function setIntensity() {
-            fetch('/setIntensity') 
-                .then(response => response.json())
-                .then(data => {
-                    const slider = document.getElementById("brightnessSlider");
-                    const intensityValue = document.getElementById("intensity-value");
-                    slider.value = data.intensity;
-                    intensityValue.value = data.intensity;
-                    if (parseFloat(data.intensity) < 400 && !emailSent) {
-                        emailSent = true;
-                        sendEmail();
-                    } else if (parseFloat(data.intensity) >= 400) {
-                        emailSent = false;
-                    }
-                });
-        }
-
-        setBrightness(0.8); 
-        </script>
-       </div>
-   </body>
 
 
     <footer>
@@ -77,7 +18,32 @@
     </footer>
 
     <script>
+        let led_status = off;
+        let email_sent = false;
 
+        function getLight() {
+            fetch('/light')
+            .then(response => response.json())
+            .then(data => {
+                //if light intensity is less than 400 turn on light
+                if (parseFloat(data.light_intensity) < 400) {
+                    turnOnLED();
+                }
+            });
+        }
+        
+        function turnOnLED()
+        {
+            fetch('/led')
+            .then(response => response.json())
+            .then(data => {
+                led_status = data.led_status;
+                email_sent = data.email_sent;
+            });
+        }
+
+    
+        window.onload = getLight;
     </script>
     
 
