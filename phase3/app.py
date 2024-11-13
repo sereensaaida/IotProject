@@ -1,10 +1,18 @@
 from flask import Flask, send_from_directory, request, jsonify
 import paho.mqtt.client as mqtt
+import RPi.GPIO as GPIO # Import Raspberry Pi GPIO library
+from time import sleep
+import datetime
+import os
+import smtplib
+import email
+import imaplib
 
 
 app = Flask(__name__)
 
 light_intensity = 0
+LED_PIN = 17
 
 #initialize MQTT client
 mqtt_client = mqtt.Client()
@@ -28,6 +36,37 @@ def mqtt_setup():
     
 mqtt_setup()
 
+def turn_on_led():
+    GPIO.setwarnings(False) # Ignore warning for now
+    GPIO.setmode(GPIO.BCM) # Use BCM Addressing pin numbering
+    GPIO.setup(LED_PIN, GPIO.OUT) # Set pin 17 to be an output pin
+    while True: # Run forever
+        GPIO.output(LED_PIN, GPIO.HIGH)
+    
+    send_notification_email()
+    
+
+def send_notification_email():
+    timestamp = datetime.datetime.now()
+    to = ["iotclient26@gmail.com"]
+    message = f"The light is on at {timestamp}."
+
+    email_id = 'testingthis2283@gmail.com'
+    email_pass = 'gsyx yxmi rnaq lwud'
+
+    msg = EmailMessage()
+    msg['Subject'] = 'Light Notification'
+    msg['From'] = email_id
+    msg['To'] = to
+    msg.set_content(message)
+
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(email_id, email_pass)
+        smtp.send_message(msg)
+        
+        
+    print('Email sent notifying user that light is on.')
+
 
 # Serve the main HTML file
 @app.route('/')
@@ -43,6 +82,12 @@ def serve_static(filename):
 @app.route('/light')
 def get_light_intensity():
     return jsonify({'light_intensity' : light_intensity})
+
+
+# turn on led and send email
+@app.route('/led')
+def turon_on_led_send_email():
+    return jsonify({'led_status' : 'on' , 'email_sent' : 'true' })
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)

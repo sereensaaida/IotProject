@@ -18,21 +18,30 @@
     </footer>
 
     <script>
+        let led_status = off;
+        let email_sent = false;
 
         function getLight() {
             fetch('/light')
             .then(response => response.json())
             .then(data => {
-                //if light intensity is greater than 400 turn on light
-                if (parseFloat(data.light_intensity) >= 400) {
+                //if light intensity is less than 400 turn on light
+                if (parseFloat(data.light_intensity) < 400) {
                     turnOnLED();
                 }
             });
         }
         
+        function turnOnLED()
+        {
+            fetch('/led')
+            .then(response => response.json())
+            .then(data => {
+                led_status = data.led_status;
+                email_sent = data.email_sent;
+            });
+        }
 
-    
-      
     
         window.onload = getLight;
     </script>
