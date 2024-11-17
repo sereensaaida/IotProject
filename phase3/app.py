@@ -87,7 +87,7 @@ def get_light_intensity():
 # turn on led and send email
 @app.route('/led')
 def turon_on_led_send_email():
-    return jsonify({'led_status' : 'on' , 'email_sent' : 'true' })
+    return jsonify({'led_status' : 'on' , 'email_sent' : True })
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
