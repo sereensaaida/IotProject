@@ -13,7 +13,7 @@ from email.message import EmailMessage
 app = Flask(__name__)
 
 light_intensity = 0
-
+GPIO.cleanup()
 
 #initialize MQTT client
 mqtt_client = mqtt.Client()
@@ -49,7 +49,6 @@ def turn_on_led():
     GPIO.setmode(GPIO.BCM) # Use BCM Addressing pin numbering
     LED=27
     GPIO.setup(LED, GPIO.OUT)
-    GPIO.output(LED, GPIO.LOW)
     GPIO.output(LED, GPIO.HIGH)
     print("LED is on")
     send_notification_email()
@@ -100,7 +99,7 @@ def turon_on_led_send_email():
     return jsonify({'led_status' : 'on' , 'email_sent' : True })
 
 if __name__ == '__main__':
-    #try:
+    try:
         app.run(host='0.0.0.0', port=5001, debug=True)
-#     finally:
-#         GPIO.cleanup()
+    finally:
+        GPIO.cleanup()
