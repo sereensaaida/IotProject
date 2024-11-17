@@ -18,17 +18,24 @@ LED_PIN = 17
 mqtt_client = mqtt.Client()
 
 def on_message(client,userdata,msg):
-    global light_intensity
-    
-    #get the value from the message
-    light_intensity = msg.payload.decode("utf-8")
-    print(light_intensity)
+    topic = msg.topic
+    if topic == "lightintensity":
+        global light_intensity
+        light_intensity = msg.payload.decode("utf-8")
+        print(f"Light Intensity: {light_intensity}")
+    elif topic == "led/status":
+        led_status = msg.payload.decode("utf-8")
+        print(f"LED Status: {led_status}")
+        if led_status == "on":
+            send_notification_email()
 
 #set up the connection and subscribe to the light topic that is published from the code for the esp32
 def mqtt_setup():
     mqtt_client.connect('localhost',1883)
     #change topic name once esp32 code has been written
     mqtt_client.subscribe("lightintensity")
+    # LED status changes
+    mqtt_client.subscribe("led/status")
     #handle incoming messages from the light topic -> called automatically by paho-mqtt
     mqtt_client.on_message = on_message
     #listen for messages
@@ -40,8 +47,11 @@ def turn_on_led():
     GPIO.setwarnings(False) # Ignore warning for now
     GPIO.setmode(GPIO.BCM) # Use BCM Addressing pin numbering
     GPIO.setup(LED_PIN, GPIO.OUT) # Set pin 17 to be an output pin
-    while True: # Run forever
-        GPIO.output(LED_PIN, GPIO.HIGH)
+    print("LED is on")
+
+    #DOUBLE CHECK THIS :redundant since the MQTT client loop handles continuous listening right?
+    #while True: # Run forever
+        #GPIO.output(LED_PIN, GPIO.HIGH)
     
     send_notification_email()
     
