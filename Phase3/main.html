@@ -41,17 +41,18 @@
        
     
         <script>
+            let emailSent = false;
 
         function sendEmail() {
             fetch('/led')
             .then(response => response.json());
             if(data.led_status == "on" && data.email_sent == True){
             const emailMsg = document.getElementById("email-message");
-            emailMsg.textContent = "Email has been sent!";
+            emailMsg.innerHTML = "Email has been sent!";
             const lightStatus = document.getElementById("status-value");
-            lightStatus.textContent = "On"
+            lightStatus.innerHTML = "On"
             
-            }
+           }
 
         }
 
@@ -62,7 +63,7 @@
                     const slider = document.getElementById("brightnessSlider");
                     const intensityValue = document.getElementById("intensity-value");
                     slider.value = data.light_intensity;
-                    intensityValue.value = data.light_intensity;
+                    intensityValue.innerHTML = data.light_intensity;
                     if (parseFloat(data.light_intensity) < 400 && !emailSent) {
                         emailSent = true;
                         sendEmail();
@@ -71,7 +72,7 @@
                     }
                 });
         }
-
+        window.onload = setIntensity;
         setBrightness(0.8); 
         </script>
        </div>

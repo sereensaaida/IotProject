@@ -1,18 +1,19 @@
 from flask import Flask, send_from_directory, request, jsonify
+import RPi.GPIO as GPIO
 import paho.mqtt.client as mqtt
-import RPi.GPIO as GPIO # Import Raspberry Pi GPIO library
 from time import sleep
 import datetime
 import os
 import smtplib
 import email
 import imaplib
+from email.message import EmailMessage
 
 
 app = Flask(__name__)
 
 light_intensity = 0
-LED_PIN = 17
+
 
 #initialize MQTT client
 mqtt_client = mqtt.Client()
@@ -46,13 +47,11 @@ mqtt_setup()
 def turn_on_led():
     GPIO.setwarnings(False) # Ignore warning for now
     GPIO.setmode(GPIO.BCM) # Use BCM Addressing pin numbering
-    GPIO.setup(LED_PIN, GPIO.OUT) # Set pin 17 to be an output pin
+    LED=27
+    GPIO.setup(LED, GPIO.OUT)
+    GPIO.output(LED, GPIO.LOW)
+    GPIO.output(LED, GPIO.HIGH)
     print("LED is on")
-
-    #DOUBLE CHECK THIS :redundant since the MQTT client loop handles continuous listening right?
-    #while True: # Run forever
-        #GPIO.output(LED_PIN, GPIO.HIGH)
-    
     send_notification_email()
     
 
@@ -97,7 +96,11 @@ def get_light_intensity():
 # turn on led and send email
 @app.route('/led')
 def turon_on_led_send_email():
+    turn_on_led()
     return jsonify({'led_status' : 'on' , 'email_sent' : True })
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    #try:
+        app.run(host='0.0.0.0', port=5001, debug=True)
+#     finally:
+#         GPIO.cleanup()

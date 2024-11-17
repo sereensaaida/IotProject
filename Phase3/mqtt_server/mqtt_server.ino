@@ -4,7 +4,8 @@
 
 // Wi-Fi and MQTT configuration
 WiFiMulti wifiMulti;
-const char* mqttServer = "192.168.0.181"; // Replace with your broker's address
+//const char* mqttServer = "192.168.0.181"; // Replace with your broker's address
+const char* mqttServer = "192.168.2.198";
 const int mqttPort = 1883; // Default MQTT port
 
 // MQTT client
@@ -35,7 +36,8 @@ void setup() {
     digitalWrite(ledPin, LOW);
 
     // Add Wi-Fi networks to WiFiMulti
-    wifiMulti.addAP("TP-Link_2AD8", "14730078");
+    //wifiMulti.addAP("TP-Link_2AD8", "14730078");
+    wifiMulti.addAP("BELL986", "766371C4");
 
     // Attempt to connect to a Wi-Fi network
     Serial.print("Connecting to Wi-Fi");
@@ -43,7 +45,7 @@ void setup() {
         delay(1000);
         Serial.print(".");
     }
-    Serial.println("";)
+    Serial.println("");
     Serial.println("Connected to Wi-Fi");
     Serial.println("IP address: ");
     Serial.println(WiFi.localIP());
@@ -67,7 +69,7 @@ void loop() {
     readLightIntensity();
 
     // Handle threshold logic and LED status
-    handleThreshold();
+    //handleThreshold();
 
     // Publish light intensity to MQTT broker
     publishLightIntensity();
