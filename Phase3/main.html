@@ -7,47 +7,58 @@
     <link rel="stylesheet" href="phase3.css">
 </head>
 <body>
-
+<!--adding title-->
    <h1>Project Phase 3</h1>
    <!DOCTYPE html>
    <html lang="en">
-   
-       
-   </head>
+<!--start of body with icons-->
    <body>
+    <!--container for dashboard-->
        <div class="dashboard">
            <h1>Light Dashboard</h1>
    
-           
+       <!--start with intensity container-->    
            <div class="intensity">
+            <!--having an icon to display lightbulb-->  
                <div class="icon" id="lightBulb">💡</div>
+           <!--having a disabled slider where user cannot modify value-->    
                <input type="range" min="0" max="1" step="0.01" value="0.5" class="slider" id="brightnessSlider" disabled>
                <div class="label">Light Intensity</div>
+            <!--intensity value that gets modified--> 
                <div class="value" id="intensity-value">0%</div> 
            </div>
-   
+        <!--move on to status of the led container--> 
            <div class="status">
+            <!--having an icon to display light source, does not change-->  
                <div class="icon">🔆</div>
                <div class="label">Light Status</div>
+            <!--light status text that gets switched to ON everytime-->  
                <div class="value" id="status-value">Off</div> 
            </div>
-   
+        <!--email container--> 
            <div class="email">
+            <!--Icon to display email--> 
                <div class="icon">📧</div>
                <div class="label">Email Status</div>
+            <!--email status text that gets changed when email is sent--> 
                <div class="value" id="email-message">no email yet...</div> 
            </div>
           
        
     
         <script>
+        //initialize email to false
             let emailSent = false;
 
+        //method to modify the email and led status when the email is sent
         function sendEmail() {
+            //fetching py method from script
             fetch('/led')
             .then(response => response.json())
             .then(data => {
-            if(data.led_status == 'on' && data.email_sent == True){
+            //if the led is turned on in the board, set the html status to have it on aswell
+            //if the email property is true from the board, modify email status on html
+            if(data.led_status == 'on' && data.email_sent == 'true'){
             const emailMsg = document.getElementById("email-message");
             emailMsg.innerHTML = "Email has been sent!";
             const lightStatus = document.getElementById("status-value");
@@ -56,17 +67,22 @@
         });
         }
 
+        //Method to declare LED intensity
         function setIntensity() {
+            //fetch py method from script
             fetch('/light') 
                 .then(response => response.json())
                 .then(data => {
+                //setting the disabled slider value to the intensity, as well as the intensity html.
                     const slider = document.getElementById("brightnessSlider");
                     const intensityValue = document.getElementById("intensity-value");
                     slider.value = data.light_intensity;
                     intensityValue.innerHTML = data.light_intensity;
+                //if the intensity is under 400 and no email has been sent yet, send the email and set the email variable to true
                     if (parseFloat(data.light_intensity) < 400 && !emailSent) {
                         emailSent = true;
                         sendEmail();
+                //if not set email to false
                     } else if (parseFloat(data.light_intensity) >= 400) {
                         emailSent = false;
                     }
