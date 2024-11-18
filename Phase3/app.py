@@ -94,9 +94,9 @@ def get_light_intensity():
 
 # turn on led and send email
 @app.route('/led')
-def turon_on_led_send_email():
+def turnon_on_led_send_email():
     turn_on_led()
-    return jsonify({'led_status' : 'on' , 'email_sent' : True })
+    return jsonify({'led_status' : 'on' , 'email_sent' : 'true' })
 
 if __name__ == '__main__':
     try:

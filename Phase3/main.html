@@ -45,15 +45,15 @@
 
         function sendEmail() {
             fetch('/led')
-            .then(response => response.json());
-            if(data.led_status == "on" && data.email_sent == True){
+            .then(response => response.json())
+            .then(data => {
+            if(data.led_status == 'on' && data.email_sent == 'true'){
             const emailMsg = document.getElementById("email-message");
             emailMsg.innerHTML = "Email has been sent!";
             const lightStatus = document.getElementById("status-value");
             lightStatus.innerHTML = "On"
-            
-           }
-
+           } 
+        });
         }
 
         function setIntensity() {
@@ -73,6 +73,7 @@
                 });
         }
         window.onload = setIntensity;
+        setInterval(setIntensity,5000);
         setBrightness(0.8); 
         </script>
        </div>
