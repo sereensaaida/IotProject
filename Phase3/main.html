@@ -47,7 +47,7 @@
             fetch('/led')
             .then(response => response.json())
             .then(data => {
-            if(data.led_status == 'on' && data.email_sent == 'true'){
+            if(data.led_status == 'on' && data.email_sent == True){
             const emailMsg = document.getElementById("email-message");
             emailMsg.innerHTML = "Email has been sent!";
             const lightStatus = document.getElementById("status-value");
