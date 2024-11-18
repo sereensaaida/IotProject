@@ -1,11 +1,4 @@
-body {
 
-    display: flex;
-    flex-direction: column;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    align-items: center;
-    justify-content: center;
-}
 
 h1 {
     margin-top: 20px;
@@ -32,6 +25,10 @@ body {
     height: 100vh;
     margin: 0;
     background-color: #f5f5f5;
+}
+
+body, .icon {
+    font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
 }
 
 .container {
@@ -62,7 +59,7 @@ footer {
     box-shadow: 0 -30px 10px rgba(0, 0, 0, 0.1);
 }
    
-           .dashboard {
+.dashboard {
                background-color: #ffffff;
                padding: 20px;
                border-radius: 10px;
@@ -71,37 +68,39 @@ footer {
                width: 300px;
            }
    
-           .dashboard h1 {
+.dashboard h1 {
                font-size: 1.5em;
                color: #333;
            }
    
-           .icon {
+.icon {
                font-size: 3em;
                margin: 10px 0;
                color: #ffa500;
            }
    
-           .status, .intensity, .email {
+.status, .intensity, .email {
                margin: 15px 0;
                padding: 10px;
                background-color: #eef3f7;
                border-radius: 8px;
            }
    
-           .status .label, .intensity .label, .email .label {
+.status .label, .intensity .label, .email .label {
                font-size: 1.2em;
                color: #666;
            }
    
-           .status .value, .intensity .value, .email .value {
+.status .value, .intensity .value, .email .value {
                font-size: 1.4em;
                color: #333;
                font-weight: bold;
            }
    
-           .led-icon {
+.led-icon {
                font-size: 2.5em;
                color: #ffa500;
            }
+
+
     
