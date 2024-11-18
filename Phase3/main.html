@@ -30,7 +30,7 @@
         <!--move on to status of the led container--> 
            <div class="status">
             <!--having an icon to display light source, does not change-->  
-               <div class="icon">🔆</div>
+               <div class="icon"> <img src="ledoff.png" alt="LED Off" class="icon-image" id="lightBulb"></div>
                <div class="label">Light Status</div>
             <!--light status text that gets switched to ON everytime-->  
                <div class="value" id="status-value">Off</div> 
@@ -61,6 +61,13 @@
             if(data.led_status == 'on' && data.email_sent == 'true'){
             const emailMsg = document.getElementById("email-message");
             emailMsg.innerHTML = "Email has been sent!";
+            lightImg = document.getElementById('lightBulb');
+            if(currentImage == image1){
+                lightImg.src = image2;
+                currentImage = image2;
+            } else {
+                lightImg.src = image1;
+            }
             const lightStatus = document.getElementById("status-value");
             lightStatus.innerHTML = "On"
            } 
