@@ -53,8 +53,8 @@
             image2 = "ledon.png";
             currentImage = image1;
         //initialize opacity to zero
-        const intensityValue = document.getElementById("intensityImg");
-        intensityValue.style.opacity = 0;
+        const intensityImg = document.getElementById("intensityImg");
+        intensityImg.style.opacity = 0;
 
         
         
@@ -92,10 +92,10 @@
                 .then(response => response.json())
                 .then(data => {
                 //setting the disabled slider value to the intensity, as well as the intensity html.
-                    const slider = document.getElementById("intensity-value");
-                    const intensityImg = document.getElementById("brightnessSlider");
+                    const slider = document.getElementById("brightnessSlider");
+                    const intensityValue = document.getElementById("intensity-value");
                     slider.value = data.light_intensity;
-                    intensityValue.style.opacity = data.light_intensity;
+                    intensityImg.style.opacity = data.light_intensity;
                     intensityValue.innerHTML = data.light_intensity;
                 //if the intensity is under 400 and no email has been sent yet, send the email and set the email variable to true
                     if (parseFloat(data.light_intensity) < 400 && !emailSent) {
