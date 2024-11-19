@@ -20,9 +20,9 @@
        <!--start with intensity container-->    
            <div class="intensity">
             <!--having an icon to display lightbulb-->  
-               <div class="icon" id="lightBulb">💡</div>
+               <div class="icon" id="intensity"><img src="light.png" alt="intensity light" class="icon-image" id="intensityImg"></div>
            <!--having a disabled slider where user cannot modify value-->    
-               <input type="range" min="0" max="1" step="0.01" value="0.5" class="slider" id="brightnessSlider" disabled>
+               <input type="range" min="0" max="1" step="0.01" value="0" class="slider" id="brightnessSlider" disabled>
                <div class="label">Light Intensity</div>
             <!--intensity value that gets modified--> 
                <div class="value" id="intensity-value">0%</div> 
@@ -38,7 +38,7 @@
         <!--email container--> 
            <div class="email">
             <!--Icon to display email--> 
-               <div class="icon">📧</div>
+               <div class="icon"><img src="email.png" alt="email status" class="icon-image" id="emailImg"></div>
                <div class="label">Email Status</div>
             <!--email status text that gets changed when email is sent--> 
                <div class="value" id="email-message">no email yet...</div> 
@@ -49,6 +49,13 @@
         <script>
         //initialize email to false
             let emailSent = false;
+            image1 = "ledoff.png";
+            image2 = "ledon.png";
+            currentImage = image1;
+        //initialize opacity to zero
+        const intensityValue = document.getElementById("intensityImg");
+        intensityValue.style.opacity = 0;
+
 
         //method to modify the email and led status when the email is sent
         function sendEmail() {
@@ -67,6 +74,7 @@
                 currentImage = image2;
             } else {
                 lightImg.src = image1;
+                currentImage = image1;
             }
             const lightStatus = document.getElementById("status-value");
             lightStatus.innerHTML = "On"
@@ -82,8 +90,9 @@
                 .then(data => {
                 //setting the disabled slider value to the intensity, as well as the intensity html.
                     const slider = document.getElementById("brightnessSlider");
-                    const intensityValue = document.getElementById("intensity-value");
+                    const intensityImg = document.getElementById("brightnessSlider");
                     slider.value = data.light_intensity;
+                    intensityValue.style.opacity = data.light_intensity;
                     intensityValue.innerHTML = data.light_intensity;
                 //if the intensity is under 400 and no email has been sent yet, send the email and set the email variable to true
                     if (parseFloat(data.light_intensity) < 400 && !emailSent) {
