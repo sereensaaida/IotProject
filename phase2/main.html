@@ -141,10 +141,10 @@ temperature is changed, which how much the gauge is filled-->
                     document.querySelector("#temperature").textContent = data.temperature;
                     document.querySelector("#humidity").textContent = data.humidity;
     
-                    if (parseFloat(data.temperature) > 24.0 && !emailSent) {
+                    if (parseFloat(data.temperature) > 20.0 && !emailSent) {
                         emailSent = true;
                         sendEmail();
-                    } else if (parseFloat(data.temperature) <= 24.0) {
+                    } else if (parseFloat(data.temperature) <= 20.0) {
                         emailSent = false;
                     }
     
