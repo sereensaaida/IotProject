@@ -160,7 +160,7 @@ def send_notification_email(email_subject, email_message):
 # Serve the main HTML file
 @app.route('/')
 def index():
-    return send_from_directory('.', 'main.html')
+    return send_from_directory('.', 'main2.html')
 
 # Serve static files like images, CSS, JavaScript
 @app.route('/<path:filename>')
@@ -223,8 +223,8 @@ def send_email_check_for_response():
     global emailRead
     print(latest_temperature)
     # Send an email if temperature is above the threshold
-    if latest_temperature is not None and latest_temperature > 24:
-        send_notification_email('Temperature Alert', f"The current temperature is {temperature:.2f} °C. Would you like to turn on the fan?")
+    if latest_temperature is not None and latest_temperature > 20:
+        send_notification_email('Temperature Alert', f"The current temperature is {latest_temperature:.2f} °C. Would you like to turn on the fan?")
         
         # Wait a bit before checking for a response
         time.sleep(60)

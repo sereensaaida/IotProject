@@ -175,10 +175,10 @@ temperature is changed, which how much the gauge is filled-->
                     document.querySelector("#temperature").textContent = data.temperature;
                     document.querySelector("#humidity").textContent = data.humidity;
     
-                    if (parseFloat(data.temperature) > 24.0 && !emailSent) {
+                    if (parseFloat(data.temperature) > 20.0 && !emailSent) {
                         emailSent = true;
                         sendEmail();
-                    } else if (parseFloat(data.temperature) <= 24.0) {
+                    } else if (parseFloat(data.temperature) <= 20.0) {
                         emailSent = false;
                     }
     
@@ -209,7 +209,7 @@ temperature is changed, which how much the gauge is filled-->
  * 'fan_status' field in the returned data.
  */
         function sendEmail() {
-            fetch('/sendemail')
+            fetch('/sendfanemail')
             .then(response => response.json())
             .then(data => {
                 if (data.fan_status) {
@@ -217,10 +217,6 @@ temperature is changed, which how much the gauge is filled-->
                 }
             });
         }
-    
-        setInterval(checkTemperature, 1000);
-    
-        window.onload = checkTemperature;
 
             image1 = "ledoff.png";
             image2 = "ledon.png";
@@ -234,7 +230,7 @@ temperature is changed, which how much the gauge is filled-->
 
 
         //method to modify the email and led status when the email is sent
-        function sendEmail() {
+        function turnOnLED() {
             //fetching py method from script
             fetch('/led')
             .then(response => response.json())
@@ -275,17 +271,43 @@ temperature is changed, which how much the gauge is filled-->
                     intensityImg.style.opacity = data.light_intensity/100;
                     intensityValue.innerHTML = data.light_intensity;
                 //if the intensity is under 400 and no email has been sent yet, send the email and set the email variable to true
-                    if (parseFloat(data.light_intensity) < 400 && !emailSent) {
-                        emailSent = true;
-                        sendEmail();
+                    if (parseFloat(data.light_intensity) < 400) {
+                        turnOnLED();
                 //if not set email to false
                     } else if (parseFloat(data.light_intensity) >= 400) {
-                        emailSent = false;
+                          //emailSent = false;
+                          turnOffLED();
                     }
                 });
+               // checkTemperature();
+        }
+
+        //turn off led when light intensity is greater than 400
+        function turnOffLED() {
+            //fetching py method from script
+            fetch('/turnoffled')
+            .then(response => response.json())
+            .then(data => {
+            //if the led is turned off in the board, set the html status to have it off aswell
+            if(data.led_status == 'off' ){
+            const emailMsg = document.getElementById("email-message");
+            emailMsg.innerHTML = "Email has been sent!";
+            lightImg = document.getElementById('lightBulb');
+            if(currentImage == image1){
+                lightImg.src = image2;
+                currentImage = image2;
+            } else {
+                lightImg.src = image1;
+                currentImage = image1;
+            }
+            const lightStatus = document.getElementById("status-value");
+            lightStatus.innerHTML = "Off"
+           } 
+        });
         }
 
         window.onload = setIntensity;
+        setInterval(checkTemperature, 1000);
         setInterval(setIntensity,5000);
         setBrightness(0.8); 
     </script>
