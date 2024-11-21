@@ -10,8 +10,9 @@ from motor import turn_on_fan  # Assuming `motor.py` has the function to control
 
 app = Flask(__name__)
 
-DHTPin = 18  # Define the pin of DHT11
+DHTPin = 20  # Define the pin of DHT11
 latest_temperature = None
+emailRead = False
 
 # Function to read temperature and humidity using DHT11
 def read_temperature_and_humidity():
@@ -63,8 +64,12 @@ def check_email_for_yes():
     if not mail_ids:
         return False  # No new emails
 
-    # Select the most recent email
-    last_email_id = mail_ids[-1]
+    #if there is a new email we change the readStatus to true so as to not accept any other responses
+    global emailRead 
+    emailRead = True
+
+    # Select the first unseen email
+    last_email_id = mail_ids[0]
     status, data = mail.fetch(last_email_id, '(RFC822)')
     raw_email = data[0][1]
 
@@ -118,7 +123,7 @@ def send_email_check_for_response():
     global latest_temperature
     print(latest_temperature)
     # Send an email if temperature is above the threshold
-    if latest_temperature is not None and latest_temperature > 24:
+    if latest_temperature is not None and latest_temperature > 20:
         send_email(latest_temperature)
         
         # Wait a bit before checking for a response
@@ -126,10 +131,11 @@ def send_email_check_for_response():
 
         # Check for a "yes" response in email periodically
         for _ in range(10):  # Check 10 times at 10-second intervals
-            if check_email_for_yes():
-                # Return fan status as "on" if "yes" was received
-                return jsonify({'fan_status': 'on'})
-            time.sleep(10)
+            if emailRead == False:
+                if check_email_for_yes():
+                    # Return fan status as "on" if "yes" was received
+                    return jsonify({'fan_status': 'on'})
+                time.sleep(10)
 
     # Return fan status as "off" if no "yes" response was found
     return jsonify({'fan_status': 'off'})

@@ -61,7 +61,7 @@
 
 
         //method to modify the email and led status when the email is sent
-        function sendEmail() {
+        function turnOnLED() {
             //fetching py method from script
             fetch('/led')
             .then(response => response.json())
@@ -98,14 +98,39 @@
                     intensityImg.style.opacity = data.light_intensity/100;
                     intensityValue.innerHTML = data.light_intensity;
                 //if the intensity is under 400 and no email has been sent yet, send the email and set the email variable to true
-                    if (parseFloat(data.light_intensity) < 400 && !emailSent) {
+                    if (parseFloat(data.light_intensity) < 400 ) {
                         emailSent = true;
-                        sendEmail();
+                        turnOnLED();
                 //if not set email to false
                     } else if (parseFloat(data.light_intensity) >= 400) {
-                        emailSent = false;
+                        //emailSent = false;
+                        turnOffLED();
                     }
                 });
+        }
+
+        //turn off led when light intensity is greater than 400
+        function turnOffLED() {
+            //fetching py method from script
+            fetch('/turnoffled')
+            .then(response => response.json())
+            .then(data => {
+            //if the led is turned off in the board, set the html status to have it off aswell
+            if(data.led_status == 'off' ){
+            const emailMsg = document.getElementById("email-message");
+            emailMsg.innerHTML = "Email has been sent!";
+            lightImg = document.getElementById('lightBulb');
+            if(currentImage == image1){
+                lightImg.src = image2;
+                currentImage = image2;
+            } else {
+                lightImg.src = image1;
+                currentImage = image1;
+            }
+            const lightStatus = document.getElementById("status-value");
+            lightStatus.innerHTML = "Off"
+           } 
+        });
         }
 
         window.onload = setIntensity;
