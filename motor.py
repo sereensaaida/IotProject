@@ -6,9 +6,9 @@ def turn_on_fan():
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
 
-    Motor1 = 22 # Enable Pin
-    Motor2 = 27 # Input Pin
-    Motor3 = 17 # Input Pin
+    Motor1 = 21 # Enable Pin
+    Motor2 = 12 # Input Pin
+    Motor3 = 25 # Input Pin
 
     GPIO.setup(Motor1,GPIO.OUT)
     GPIO.setup(Motor2,GPIO.OUT)

@@ -5,7 +5,7 @@
 // Wi-Fi and MQTT configuration
 WiFiMulti wifiMulti;
 //const char* mqttServer = "192.168.0.181"; // Replace with your broker's address
-const char* mqttServer = "192.168.2.198";
+const char* mqttServer = "192.168.231.99";
 const int mqttPort = 1883; // Default MQTT port
 
 // MQTT client
@@ -37,7 +37,7 @@ void setup() {
 
     // Add Wi-Fi networks to WiFiMulti
     //wifiMulti.addAP("TP-Link_2AD8", "14730078");
-    wifiMulti.addAP("BELL986", "766371C4");
+    wifiMulti.addAP("Galaxy A237E91", "beepbeep");
 
     // Attempt to connect to a Wi-Fi network
     Serial.print("Connecting to Wi-Fi");
