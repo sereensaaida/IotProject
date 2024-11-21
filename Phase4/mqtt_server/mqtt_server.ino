@@ -1,6 +1,12 @@
 #include <WiFi.h>
 #include <WiFiMulti.h>
 #include <PubSubClient.h> // Include PubSubClient for MQTT
+#include <SPI.h>
+#include <MFRC522.h>
+
+#define SS_PIN 5 // SDA Pin on RC522
+#define RST_PIN 4 // RST Pin on RC522
+MFRC522 rfid(SS_PIN, RST_PIN); // Create MFRC522 instance
 
 // Wi-Fi and MQTT configuration
 WiFiMulti wifiMulti;
@@ -57,6 +63,10 @@ void setup() {
 
     // Reconnect to MQTT broker
     reconnect();
+
+    SPI.begin(); // Initialize SPI bus
+    rfid.PCD_Init(); // Initialize MFRC522 reader
+    Serial.println("Place your RFID card near the reader...");
 }
 
 // Main loop
@@ -76,6 +86,7 @@ void loop() {
     publishLightIntensity();
 
     delay(1000); // Delay for stability
+    readCard();
 }
 
 // Function to reconnect to the MQTT broker
@@ -121,4 +132,27 @@ void publishLightIntensity() {
     snprintf(intensityStr, sizeof(intensityStr), "%d", lightIntensity);
     client.publish("lightintensity", intensityStr);
     Serial.println("Published light intensity to MQTT.");
+}
+
+void readCard(){
+    // Look for new cards
+  if (!rfid.PICC_IsNewCardPresent()) {
+    return;
+  }
+
+  // Select one of the cards
+  if (!rfid.PICC_ReadCardSerial()) {
+    return;
+  }
+
+  // Print UID
+  Serial.print("Card UID:");
+  for (byte i = 0; i < rfid.uid.size; i++) {
+    Serial.print(rfid.uid.uidByte[i] < 0x10 ? " 0" : " ");
+    Serial.print(rfid.uid.uidByte[i], HEX);
+  }
+
+  Serial.println();
+  // Halt PICC
+  rfid.PICC_HaltA();
 }
