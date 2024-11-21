@@ -18,6 +18,7 @@ app = Flask(__name__)
 light_intensity = 0
 rfid_tag = ""
 GPIO.cleanup()
+emailRead = False
 
 DHTPin = 18  # Define the pin of DHT11
 latest_temperature = None
@@ -106,9 +107,11 @@ def check_email_for_yes():
     mail_content = mail_content.lower()
     print(f'Content of latest email: {mail_content}')
 
+    global emailRead 
     # Check if "yes" is in the content to turn on the fan
     if 'yes' in mail_content:
         turn_on_fan()  # Turn on fan
+        emailRead = True
         return True
 
     return False
@@ -121,7 +124,7 @@ def turn_on_led():
     GPIO.output(LED, GPIO.HIGH)
     print("LED is on")
     timestamp = datetime.datetime.now()
-    send_notification_email(f"Light Notification",f"The light is on at {timestamp}.")
+    send_notification_email(f"Light Notification",f"The light was turned on {timestamp.strftime('%B %d,%Y at %I:%M %p')}.")
     
 
 def send_notification_email(email_subject, email_message):
@@ -170,7 +173,7 @@ def user_info():
     #send data through post on the other end??
     #retrieve username, light and temperature preferences
     timestamp = datetime.datetime.now()
-    send_notification_email("Welcome {username}",f"User X entered at {timestamp}.")
+    send_notification_email("Welcome {username}",f"User X entered on on {timestamp.strftime('%B %d,%Y at %I:%M %p')}.")
 
 # turn on led and send email
 @app.route('/led')
@@ -196,6 +199,7 @@ def check_temperature():
 @app.route('/sendfanemail')
 def send_email_check_for_response():
     global latest_temperature
+    global emailRead
     print(latest_temperature)
     # Send an email if temperature is above the threshold
     if latest_temperature is not None and latest_temperature > 24:
@@ -206,10 +210,12 @@ def send_email_check_for_response():
 
         # Check for a "yes" response in email periodically
         for _ in range(10):  # Check 10 times at 10-second intervals
-            if check_email_for_yes():
-                # Return fan status as "on" if "yes" was received
-                return jsonify({'fan_status': 'on'})
-            time.sleep(10)
+            #only read email the first email that the user replies with
+            if !emailRead:
+                if check_email_for_yes():
+                    # Return fan status as "on" if "yes" was received
+                    return jsonify({'fan_status': 'on'})
+                time.sleep(10)
 
     # Return fan status as "off" if no "yes" response was found
     return jsonify({'fan_status': 'off'})
