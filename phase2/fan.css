@@ -38,7 +38,6 @@ footer {
 
 /* Container to position .fan on the middle right of the screen */
 .fan-container {
-    position: absolute;
     top: 50%; /* Center vertically */
     margin-left: 800px; /* Align to the right */
     transform: translateY(-50%); /* Center adjustment */

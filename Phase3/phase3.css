@@ -102,6 +102,7 @@ footer {
            .status .label, .intensity .label, .email .label {
                font-size: 1.2em;
                color: #666;
+               text-align: center;
            }
    
            .status .value, .intensity .value, .email .value {
