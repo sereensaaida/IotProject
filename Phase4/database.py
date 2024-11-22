@@ -1,35 +1,37 @@
 import sqlite3
 
-DB_FILE = "users.db"
+DATABASE_FILE = "users.db"
 
-def insert_or_update_temperature_and_light(rfid_tag, temp_threshold, light_threshold):
-    """
-    Insert or update the temperature and light intensity for a specific user based on their RFID tag.
-    """
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
+# Connect to SQLite database
+conn = sqlite3.connect(DATABASE_FILE)
+cursor = conn.cursor()
 
-    # Check if the user exists by RFID tag
+def select_user(rfid):
     cursor.execute('''
-    SELECT * FROM users WHERE rfid_tag = ?
-    ''', (rfid_tag,))
-    
-    user = cursor.fetchone()
+    SELECT * FROM users WHERE rfid = :rfid
+    ''', {'rfid': rfid})
+    return cursor.fetchall()
 
-    if user:
-        # If user exists, update the temperature and light intensity
-        cursor.execute('''
-        UPDATE users
-        SET temp_threshold = ?, light_threshold = ?
-        WHERE rfid_tag = ?
-        ''', (temp_threshold, light_threshold, rfid_tag))
-    else:
-        # If user does not exist, insert the new data
-        cursor.execute('''
-        INSERT INTO users (rfid_tag, temp_threshold, light_threshold)
-        VALUES (?, ?, ?)
-        ''', (rfid_tag, temp_threshold, light_threshold))
+def initialize_db():
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS users (
+        rfid TEXT UNIQUE NOT NULL,
+        username TEXT NOT NULL,
+        temp REAL NOT NULL,
+        light REAL NOT NULL
+    )
+    ''')
+
+    # Insert data
+    users = [
+        ('33 08 D5 24', 'jayda grenada', 25.0, 70.0),  
+        ('A3 2E D8 04', 'manas mango', 30.0, 80.0)   
+    ]
+    cursor.executemany(
+        'INSERT OR IGNORE INTO users (rfid, username, temp, light) VALUES (?, ?, ?, ?)', 
+        users
+    )
     
+    # Commit changes
     conn.commit()
-    conn.close()
-    print(f"Updated/Inserted RFID: {rfid_tag} with temp: {temp_threshold} and light: {light_threshold}")
+    print("Database initialized and populated successfully!")
