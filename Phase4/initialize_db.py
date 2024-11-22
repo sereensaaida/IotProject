@@ -10,19 +10,19 @@ cursor = conn.cursor()
 # Create the table
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    rfid_tag TEXT UNIQUE NOT NULL,
-    temp_threshold REAL NOT NULL,
-    light_threshold REAL NOT NULL
+    rfid TEXT UNIQUE NOT NULL,
+    username TEXT NOT NULL
+    temp REAL NOT NULL,
+    light REAL NOT NULL
 )
 ''')
 
 # Insert data
 users = [
-    ('33 08 D5 24', 25.0, 70.0),  # User 1
-    ('A3 2E D8 04', 30.0, 80.0)   # User 2
+    ('33 08 D5 24', 'jayda grenada' 25.0, 70.0),  
+    ('A3 2E D8 04', 'manas mango', 30.0, 80.0)   
 ]
-cursor.executemany('INSERT OR IGNORE INTO users (rfid_tag, temp_threshold, light_threshold) VALUES (?, ?, ?)', users)
+cursor.executemany('INSERT OR IGNORE INTO users (rfid, username, temp, light) VALUES (?, ?, ?, ?)', users)
 
 # Commit and close
 conn.commit()
