@@ -3,7 +3,6 @@
 #include <PubSubClient.h> // Include PubSubClient for MQTT
 #include <SPI.h>
 #include <MFRC522.h>
-#include <SQLite3.h>
 
 #define SS_PIN 5 // SDA Pin on RC522
 #define RST_PIN 4 // RST Pin on RC522
@@ -164,7 +163,7 @@ void handleRFID(){
     Serial.println(uidString);
 
     // Publish UID to MQTT topic
-    if (client.publish("rfid/card", uidString.c_str())) {
+    if (client.publish("rfidtag", uidString.c_str())) {
         Serial.println("RFID UID published successfully.");
     } else {
         Serial.println("Failed to publish RFID UID.");
