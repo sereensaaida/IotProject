@@ -3,6 +3,7 @@
 #include <PubSubClient.h> // Include PubSubClient for MQTT
 #include <SPI.h>
 #include <MFRC522.h>
+#include <SQLite3.h>
 
 #define SS_PIN 5 // SDA Pin on RC522
 #define RST_PIN 4 // RST Pin on RC522
@@ -86,7 +87,8 @@ void loop() {
     publishLightIntensity();
 
     delay(1000); // Delay for stability
-    readCard();
+    handleRFID();
+    delay(1000);
 }
 
 // Function to reconnect to the MQTT broker
@@ -134,7 +136,7 @@ void publishLightIntensity() {
     Serial.println("Published light intensity to MQTT.");
 }
 
-void readCard(){
+void handleRFID(){
     // Look for new cards
   if (!rfid.PICC_IsNewCardPresent()) {
     return;
@@ -145,14 +147,29 @@ void readCard(){
     return;
   }
 
-  // Print UID
-  Serial.print("Card UID:");
-  for (byte i = 0; i < rfid.uid.size; i++) {
-    Serial.print(rfid.uid.uidByte[i] < 0x10 ? " 0" : " ");
-    Serial.print(rfid.uid.uidByte[i], HEX);
-  }
+  // Format the UID into a string
+    String uidString = "";
+    for (byte i = 0; i < rfid.uid.size; i++) {
+        if (rfid.uid.uidByte[i] < 0x10) {
+            uidString += "0"; // Add leading zero for single-digit bytes
+        }
+        uidString += String(rfid.uid.uidByte[i], HEX); // Convert to hexadecimal
+        if (i < rfid.uid.size - 1) {
+            uidString += " "; // Add separator
+        }
+    }
 
-  Serial.println();
-  // Halt PICC
-  rfid.PICC_HaltA();
+    // Print UID to serial monitor
+    Serial.print("Card UID: ");
+    Serial.println(uidString);
+
+    // Publish UID to MQTT topic
+    if (client.publish("rfid/card", uidString.c_str())) {
+        Serial.println("RFID UID published successfully.");
+    } else {
+        Serial.println("Failed to publish RFID UID.");
+    }
+
+    // Halt PICC
+    rfid.PICC_HaltA();
 }
