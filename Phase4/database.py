@@ -1,18 +1,26 @@
 import sqlite3
+cursor = None
+conn = None
 
-DATABASE_FILE = "users.db"
+def initialize_cursor():
+    DATABASE_FILE = "users.db"
 
-# Connect to SQLite database
-conn = sqlite3.connect(DATABASE_FILE)
-cursor = conn.cursor()
+    global conn
+    # Connect to SQLite database
+    conn = sqlite3.connect(DATABASE_FILE)
+    global cursor
+    cursor = conn.cursor()
 
 def select_user(rfid):
+    global cursor
     cursor.execute('''
     SELECT * FROM users WHERE rfid = :rfid
     ''', {'rfid': rfid})
-    return cursor.fetchall()
+    return cursor.fetchone()
 
 def initialize_db():
+    global conn
+    global cursor
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS users (
         rfid TEXT UNIQUE NOT NULL,
@@ -24,7 +32,7 @@ def initialize_db():
 
     # Insert data
     users = [
-        ('33 08 D5 24', 'jayda grenada', 25.0, 70.0),  
+        ('33 08 d5 24', 'jayda grenada', 25.0, 70.0),  
         ('A3 2E D8 04', 'manas mango', 30.0, 80.0)   
     ]
     cursor.executemany(

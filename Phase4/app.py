@@ -12,7 +12,7 @@ import time
 from Freenove_DHT import DHT
 from motor import turn_on_fan  
 import sqlite3
-from database import insert_or_update_temperature_and_light
+from database import initialize_db, select_user, initialize_cursor
 
 app = Flask(__name__)
 
@@ -21,6 +21,7 @@ rfid_tag = ""
 GPIO.cleanup()
 emailRead = False
 lightEmailSent = False
+userEmailSent = False
 
 DHTPin = 20  # Define the pin of DHT11
 latest_temperature = None
@@ -163,7 +164,7 @@ def send_notification_email(email_subject, email_message):
 # Serve the main HTML file
 @app.route('/')
 def index():
-    return send_from_directory('.', 'main2.html')
+    return send_from_directory('.', 'login.html')
 
 # Serve static files like images, CSS, JavaScript
 @app.route('/<path:filename>')
@@ -183,11 +184,27 @@ def profile():
 #retrieve the user info from the dashoard
 @app.route('/userinfo')
 def user_info():
-    #send data through post on the other end??
-    #retrieve username, light and temperature preferences
-    timestamp = datetime.datetime.now()
-    send_notification_email(f"Welcome {username}",f"User X entered on on {timestamp.strftime('%B %d,%Y at %I:%M %p')}.")
+    #call initialize db function
+    initialize_cursor()
+    initialize_db()
+    global rfid_tag
+    print(rfid_tag)
+    user = select_user(rfid_tag) 
+    print(user)
 
+    if(user is None):
+        return jsonify({'user_exists' : 'false'})
+
+    print(f"{user[1]} 'rfid' {user[0]}, 'db_temp': {user[2]}, 'db_light' {user[3]}")    
+    
+    global userEmailSent
+    if userEmailSent ==False:
+        timestamp = datetime.datetime.now()
+        send_notification_email(f"Welcome { user[1]}",f"User { user[1]} entered on on {timestamp.strftime('%B %d,%Y at %I:%M %p')}.")
+        userEmailSent =True
+
+    return jsonify({'user_exists' : 'true', 'username' : user[1], 'rfid' : user[0], 'db_temp': user[2], 'db_light' : user[3]})
+    
 # turn on led and send email
 @app.route('/led')
 def turnon_on_led_send_email():

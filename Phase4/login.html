@@ -25,7 +25,27 @@
     </footer>
 
     <script>
-     
+        let username ="";
+        let rfid ="";
+        let temp ="";
+        let light ="";
+
+function getUserInfo() {
+            fetch('/userinfo')
+            .then(response => response.json())
+            .then(data => {
+               if(data.user_exists != 'false'){
+                    username = data.username;
+                    rfid = data.rfid;
+                    temp = data.db_temp;
+                    light = data.db_light;
+               }
+            });
+        }
+
+     window.onload  = getUserInfo;
+     setInterval(getUserInfo, 1000);
+
     </script>
 </body>
 </html>
