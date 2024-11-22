@@ -11,7 +11,8 @@ from email.message import EmailMessage
 import time
 from Freenove_DHT import DHT
 from motor import turn_on_fan  
-
+import sqlite3
+from database import insert_or_update_temperature_and_light
 
 app = Flask(__name__)
 
@@ -23,6 +24,8 @@ lightEmailSent = False
 
 DHTPin = 20  # Define the pin of DHT11
 latest_temperature = None
+
+DB_FILE = "users.db"
 
 #initialize MQTT client
 mqtt_client = mqtt.Client()
@@ -240,6 +243,17 @@ def send_email_check_for_response():
 
     # Return fan status as "off" if no "yes" response was found
     return jsonify({'fan_status': 'off'})
+
+@app.route('/update_user', methods=['POST'])
+def update_user():
+    rfid_tag = request.json.get('rfid_tag')
+    temp_threshold = request.json.get('temp_threshold')
+    light_threshold = request.json.get('light_threshold')
+
+    # Call the function in database.py to update the database
+    insert_or_update_temperature_and_light(rfid_tag, temp_threshold, light_threshold)
+    
+    return jsonify({'status': 'success'}), 200
 
 if __name__ == '__main__':
     try:
