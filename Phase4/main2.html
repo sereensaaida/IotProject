@@ -8,7 +8,7 @@
 </head>
 <body>
 
-   <h1>Project Phase 4</h1>
+   <h1 id="welcome-heading">Project Phase 4</h1>
 
 <!--gauge containers, one gauge for temperatue and one for humidity, beginning with value of 0, value gets modified as
 temperature is changed, which how much the gauge is filled-->
@@ -110,6 +110,16 @@ temperature is changed, which how much the gauge is filled-->
     </footer>
 
     <script>
+
+    const params = new URLSearchParams(window.location.search);
+    const username = params.get('username');
+    const rfid = params.get('rfid');
+    const temp = params.get('temp');
+    const light = params.get('light');
+
+    const heading = document.getElementById("welcome-heading");
+    heading.textContent = `Welcome to phase 4, ${username}`;
+
         let isRunning = false;
         let emailSent = false; // Track if an email was already sent
         let circle = document.querySelector('.circle');
@@ -175,10 +185,10 @@ temperature is changed, which how much the gauge is filled-->
                     document.querySelector("#temperature").textContent = data.temperature;
                     document.querySelector("#humidity").textContent = data.humidity;
     
-                    if (parseFloat(data.temperature) > 20.0 && !emailSent) {
+                    if (parseFloat(data.temperature) > temp && !emailSent) {
                         emailSent = true;
                         sendEmail();
-                    } else if (parseFloat(data.temperature) <= 20.0) {
+                    } else if (parseFloat(data.temperature) <= temp) {
                         emailSent = false;
                     }
     
@@ -271,10 +281,10 @@ temperature is changed, which how much the gauge is filled-->
                     intensityImg.style.opacity = data.light_intensity/100;
                     intensityValue.innerHTML = data.light_intensity;
                 //if the intensity is under 400 and no email has been sent yet, send the email and set the email variable to true
-                    if (parseFloat(data.light_intensity) < 400) {
+                    if (parseFloat(data.light_intensity) < light) {
                         turnOnLED();
                 //if not set email to false
-                    } else if (parseFloat(data.light_intensity) >= 400) {
+                    } else if (parseFloat(data.light_intensity) >= light) {
                           //emailSent = false;
                           turnOffLED();
                     }

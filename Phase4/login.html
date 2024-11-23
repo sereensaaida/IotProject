@@ -39,6 +39,15 @@ function getUserInfo() {
                     rfid = data.rfid;
                     temp = data.db_temp;
                     light = data.db_light;
+                    const params = new URLSearchParams({
+                    username: username,
+                    rfid: rfid,
+                    temp: temp,
+                    light: light
+            });
+            window.location.href = `main2.html?${params.toString()}`;
+               } else {
+                alert("You do not have unauthorized access!");
                }
             });
         }
