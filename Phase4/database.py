@@ -32,8 +32,8 @@ def initialize_db():
 
     # Insert data
     users = [
-        ('33 08 d5 24', 'jayda grenada', 25.0, 70.0),  
-        ('A3 2E D8 04', 'manas mango', 30.0, 80.0)   
+        ('33 08 d5 24', 'jayda grenada', 25.0, 400.0),  
+        ('a3 2e db 04', 'manas mango', 20.0, 80.0)   
     ]
     cursor.executemany(
         'INSERT OR IGNORE INTO users (rfid, username, temp, light) VALUES (?, ?, ?, ?)', 
