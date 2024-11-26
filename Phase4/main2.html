@@ -157,6 +157,10 @@ temperature is changed, which how much the gauge is filled-->
          * @param {string} fanStatus - The fan status from the server, either "on" or "off".
          */
         function updateFanStatus(fanStatus) {
+            if (fanStatus !== "on" && fanStatus !== "off") {
+            stopFan(); // Default to stop the fan
+            }
+
             if (fanStatus === "on" && !isRunning) {
                 startFan();
             } else if (fanStatus === "off" && isRunning) {
