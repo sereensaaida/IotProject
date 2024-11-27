@@ -19,7 +19,9 @@ def turn_on_fan():
     GPIO.output(Motor1, GPIO.HIGH)
     GPIO.output(Motor2, GPIO.LOW)
     GPIO.output(Motor3, GPIO.HIGH)
-    return jsonify({'fan_status': 'on'})
+    #time.sleep(3)
+    #turn_off_fan
+    #return jsonify({'fan_status': 'on'})
     print('Fan is running...')
 
 def turn_off_fan():

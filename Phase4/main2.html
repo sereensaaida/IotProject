@@ -139,6 +139,20 @@ temperature is changed, which how much the gauge is filled-->
                 circle.style.transform = `rotate(${rotation}deg)`;
             }, 16);
         };
+
+        /**
+        const startFan = () => {
+            isRunning = true;
+            rotation = 0;
+            timer = setInterval(() => {
+                rotation += 12;
+                circle.style.transform = `rotate(${rotation}deg)`;
+            }, 16);
+
+            // Stop the fan after 3 seconds
+            setTimeout(stopFan, 3000); // 3000 milliseconds = 3 seconds
+        };
+        */
     
 
 /**

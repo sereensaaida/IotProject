@@ -121,12 +121,13 @@ def check_email_for_yes():
 
     # Check if "yes" is in the content to turn on the fan
     if 'yes' in mail_content:
-        turn_on_fan() 
-        global fanRunning
-        fanRunning = True
-        time.sleep(3)
-        fanSpinning = turn_off_fan()
-        return fanSpinning
+        turn_on_fan()
+        return jsonify({'fan_status': 'on'})
+        #global fanRunning
+        #fanRunning = True
+        #time.sleep(3)
+        #fanSpinning = turn_off_fan()
+        #return fanSpinning
 
     return False
 
