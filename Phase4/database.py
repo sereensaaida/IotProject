@@ -32,7 +32,7 @@ def initialize_db():
 
     # Insert data
     users = [
-        ('33 08 d5 24', 'Jayda Pizzuco', 25.0, 400.0),  
+        ('33 08 d5 24', 'Jayda Pizzuco', 25.0, 70.0),  
         ('a3 2e db 04', 'Manas Patel', 20.0, 80.0)   
     ]
     cursor.executemany(

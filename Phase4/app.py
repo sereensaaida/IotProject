@@ -10,7 +10,7 @@ import imaplib
 from email.message import EmailMessage
 import time
 from Freenove_DHT import DHT
-from motor import turn_on_fan  
+from motor import turn_on_fan, turn_off_fan
 import sqlite3
 from database import initialize_db, select_user, initialize_cursor
 
@@ -24,6 +24,7 @@ lightEmailSent = False
 userEmailSent = False
 userTemp = 0
 userLight = 0
+fanRunning = False
 
 DHTPin = 20  # Define the pin of DHT11
 latest_temperature = None
@@ -121,9 +122,11 @@ def check_email_for_yes():
     # Check if "yes" is in the content to turn on the fan
     if 'yes' in mail_content:
         turn_on_fan() 
-        sleep(10000)
-        turn_off_fan()
-        return True
+        global fanRunning
+        fanRunning = True
+        time.sleep(3)
+        fanSpinning = turn_off_fan()
+        return fanSpinning
 
     return False
 
@@ -259,19 +262,21 @@ def send_email_check_for_response():
         send_notification_email('Temperature Alert', f"The current temperature is {latest_temperature:.2f} °C. Would you like to turn on the fan?")
         
         # Wait a bit before checking for a response
-        time.sleep(60)
+        time.sleep(30)
 
         # Check for a "yes" response in email periodically
         for _ in range(10):  # Check 10 times at 10-second intervals
             #only read email the first email that the user replies with
             if emailRead == False:
-                if check_email_for_yes():
+                check_email_for_yes()
+                global fanRunning
+                if fanRunning == True:
                     # Return fan status as "on" if "yes" was received
                     return jsonify({'fan_status': 'on'})
-                time.sleep(10)
+                    time.sleep(10)
 
     # Return fan status as "off" if no "yes" response was found
-    return jsonify({'fan_status': 'off'})
+    #return jsonify({'fan_status': 'off'})
 
 @app.route('/update_user', methods=['POST'])
 def update_user():

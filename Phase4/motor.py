@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 from time import sleep
-
+from flask import jsonify
 # Pin configuration
 Motor1 = 21  # Enable Pin
 Motor2 = 12  # Input Pin
@@ -19,6 +19,7 @@ def turn_on_fan():
     GPIO.output(Motor1, GPIO.HIGH)
     GPIO.output(Motor2, GPIO.LOW)
     GPIO.output(Motor3, GPIO.HIGH)
+    return jsonify({'fan_status': 'on'})
     print('Fan is running...')
 
 def turn_off_fan():
@@ -27,6 +28,7 @@ def turn_off_fan():
     GPIO.output(Motor2, GPIO.LOW)
     GPIO.output(Motor3, GPIO.LOW)
     GPIO.cleanup()
+    return jsonify({'fan_status': 'off'})
     print('Fan stopped')
 
 if __name__ == "__main__":

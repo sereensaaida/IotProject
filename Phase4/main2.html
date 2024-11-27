@@ -228,9 +228,9 @@ temperature is changed, which how much the gauge is filled-->
             fetch('/sendfanemail')
             .then(response => response.json())
             .then(data => {
-                if (data.fan_status) {
+                //if (data.fan_status == 'on') {
                     updateFanStatus(data.fan_status);
-                }
+                //}
             });
         }
 
