@@ -22,6 +22,7 @@ GPIO.cleanup()
 emailRead = False
 lightEmailSent = False
 userEmailSent = False
+userTemp = 0
 
 DHTPin = 20  # Define the pin of DHT11
 latest_temperature = None
@@ -196,6 +197,9 @@ def user_info():
         return jsonify({'user_exists' : 'false'})
 
     print(f"{user[1]} 'rfid' {user[0]}, 'db_temp': {user[2]}, 'db_light' {user[3]}")    
+
+    global userTemp
+    userTemp = user[2]
     
     global userEmailSent
     if userEmailSent ==False:
@@ -241,9 +245,10 @@ def check_temperature():
 def send_email_check_for_response():
     global latest_temperature
     global emailRead
+    global userTemp
     print(latest_temperature)
     # Send an email if temperature is above the threshold
-    if latest_temperature is not None and latest_temperature > 20:
+    if latest_temperature is not None and latest_temperature > userTemp:
         send_notification_email('Temperature Alert', f"The current temperature is {latest_temperature:.2f} °C. Would you like to turn on the fan?")
         
         # Wait a bit before checking for a response
