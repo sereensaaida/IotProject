@@ -116,6 +116,8 @@ temperature is changed, which how much the gauge is filled-->
     const rfid = params.get('rfid');
     const temp = params.get('temp');
     const light = params.get('light');
+    const lightStatus = document.getElementById("status-value");
+
 
     const heading = document.getElementById("welcome-heading");
     heading.textContent = `Welcome to phase 4, ${username}`;
@@ -299,13 +301,17 @@ temperature is changed, which how much the gauge is filled-->
                         };
                         timestamp = now.toLocaleString(undefined, options);
                         lightImg.src = image2;
+                        lightStatus.innerHTML = "On"
                         emailMsg.innerHTML = `Email has been sent at ${timestamp}`;
+
 
                 //if not set email to false
                     } else if (parseFloat(data.light_intensity) >= light) {
                           //emailSent = false;
                           turnOffLED();
                           lightImg.src = image1;
+                          lightStatus.innerHTML = "Off"
+
                     }
                 });
                // checkTemperature();
@@ -329,8 +335,7 @@ temperature is changed, which how much the gauge is filled-->
             //     lightImg.src = image1;
             //     currentImage = image1;
             // }
-            const lightStatus = document.getElementById("status-value");
-            lightStatus.innerHTML = "Off"
+            
            } 
         });
         }
