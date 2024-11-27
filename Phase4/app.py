@@ -120,7 +120,9 @@ def check_email_for_yes():
 
     # Check if "yes" is in the content to turn on the fan
     if 'yes' in mail_content:
-        turn_on_fan()  # Turn on fan
+        turn_on_fan() 
+        sleep(10000)
+        turn_off_fan()
         return True
 
     return False
