@@ -290,7 +290,14 @@ temperature is changed, which how much the gauge is filled-->
                     if (parseFloat(data.light_intensity) < light) {
                         turnOnLED();                  
                         now = new Date();
-                        timestamp = now.toLocaleString();
+                        const options = { 
+                        hour: '2-digit', 
+                        minute: '2-digit', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                        };
+                        timestamp = now.toLocaleString(undefined, options);
                         lightImg.src = image2;
                         emailMsg.innerHTML = `Email has been sent at ${timestamp}`;
 
