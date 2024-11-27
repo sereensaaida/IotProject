@@ -34,7 +34,7 @@ function getUserInfo() {
             fetch('/userinfo')
             .then(response => response.json())
             .then(data => {
-               if(data.user_exists != 'false'){
+               if(data.user_exists == 'true'){
                     username = data.username;
                     rfid = data.rfid;
                     temp = data.db_temp;
@@ -46,8 +46,11 @@ function getUserInfo() {
                     light: light
             });
             window.location.href = `main2.html?${params.toString()}`;
-               } else {
+               } else if (data.user_exists == 'false') {
                 alert("You do not have authorized access!");
+               }
+               else {
+                return;
                }
             });
         }

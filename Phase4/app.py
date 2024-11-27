@@ -190,6 +190,10 @@ def user_info():
     initialize_db()
     global rfid_tag
     print(rfid_tag)
+    #if a card hasn't yet been scanned
+    if(rfid_tag is ""):
+        return jsonify({'user_exists' : 'not yet'})
+
     user = select_user(rfid_tag) 
     print(user)
 
