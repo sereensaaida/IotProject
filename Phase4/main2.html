@@ -272,6 +272,7 @@ temperature is changed, which how much the gauge is filled-->
         let now;
         let timestamp;
 
+        let ledStatus = false;
         //Method to declare LED intensity
         function setIntensity() {
             //fetch py method from script
@@ -287,8 +288,9 @@ temperature is changed, which how much the gauge is filled-->
                     const emailMsg = document.getElementById("email-message");
                     lightImg = document.getElementById('lightBulb');
                 //if the intensity is under 400 and no email has been sent yet, send the email and set the email variable to true
-                    if (parseFloat(data.light_intensity) < light) {
-                        turnOnLED();                  
+                    if (parseFloat(data.light_intensity) < light && ledStatus == false) {
+                        turnOnLED();    
+                        ledStatus = true;              
                         now = new Date();
                         const options = { 
                         hour: '2-digit', 
@@ -302,9 +304,10 @@ temperature is changed, which how much the gauge is filled-->
                         emailMsg.innerHTML = `Email has been sent at ${timestamp}`;
 
                 //if not set email to false
-                    } else if (parseFloat(data.light_intensity) >= light) {
+                    } else if (parseFloat(data.light_intensity) >= light && ledStatus == true) {
                           //emailSent = false;
                           turnOffLED();
+                          ledStatus = false;
                           lightImg.src = image1;
                     }
                 });

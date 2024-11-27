@@ -23,6 +23,7 @@ emailRead = False
 lightEmailSent = False
 userEmailSent = False
 userTemp = 0
+userLight = 0
 
 DHTPin = 20  # Define the pin of DHT11
 latest_temperature = None
@@ -204,6 +205,9 @@ def user_info():
 
     global userTemp
     userTemp = user[2]
+
+    global userLight
+    userLight =user[3]
     
     global userEmailSent
     if userEmailSent ==False:
@@ -217,11 +221,8 @@ def user_info():
 @app.route('/led')
 def turnon_on_led_send_email():
     turn_on_led()
-    global lightEmailSent
-    if lightEmailSent == False:
-        timestamp = datetime.datetime.now()
-        send_notification_email(f"Light Notification",f"The light was turned on {timestamp.strftime('%B %d,%Y at %I:%M %p')}.")
-        lightEmailSent = True
+    timestamp = datetime.datetime.now()
+    send_notification_email(f"Light Notification",f"The light was turned on {timestamp.strftime('%B %d,%Y at %I:%M %p')}.")
     return jsonify({'led_status' : 'on' , 'email_sent' : 'true' })
 
 # turn of led 
