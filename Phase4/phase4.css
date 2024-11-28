@@ -12,9 +12,22 @@ h1 {
     font-size: 60px;
     width: 80%;
     color: #ac2929ec; 
+    border-radius: 10px;
+    box-shadow: 0px 10px 15px #b92b2bd4;
 
     text-align: center;
 }
+
+h2 {
+   
+    font-size: 20px;
+    width: 80%;
+    color: #ac2929ec; 
+ 
+
+    text-align: center;
+}
+
 
 
 

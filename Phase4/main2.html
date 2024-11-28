@@ -9,6 +9,8 @@
 <body>
 
    <h1 id="welcome-heading">Project Phase 4</h1>
+   <h2 id="user-info"></h2>
+
 
 <!--gauge containers, one gauge for temperatue and one for humidity, beginning with value of 0, value gets modified as
 temperature is changed, which how much the gauge is filled-->
@@ -117,14 +119,19 @@ temperature is changed, which how much the gauge is filled-->
     const temp = params.get('temp');
     const light = params.get('light');
     const lightStatus = document.getElementById("status-value");
+    const userInfoTxt = document.getElementById("user-info");
+    
+
 
 
     const heading = document.getElementById("welcome-heading");
     heading.textContent = `Welcome to phase 4, ${username}`;
+    userInfoTxt.textContent = `Name: ${username}, Temperature Threshold: ${temp}, light Threshold: ${light}`;
 
         let isRunning = false;
         let emailSent = false; 
         let circle = document.querySelector('.circle');
+       
     
         /**
          * Starts the fan by setting the isRunning flag to true, 
@@ -132,6 +139,7 @@ temperature is changed, which how much the gauge is filled-->
          * setting up an interval timer to rotate the fan every 16 milliseconds.
          */
         const startFan = () => {
+            console.log("starting fan");
             isRunning = true;
             rotation = 0;
             timer = setInterval(() => {
@@ -140,19 +148,8 @@ temperature is changed, which how much the gauge is filled-->
             }, 16);
         };
 
-        /**
-        const startFan = () => {
-            isRunning = true;
-            rotation = 0;
-            timer = setInterval(() => {
-                rotation += 12;
-                circle.style.transform = `rotate(${rotation}deg)`;
-            }, 16);
 
-            // Stop the fan after 3 seconds
-            setTimeout(stopFan, 3000); // 3000 milliseconds = 3 seconds
-        };
-        */
+        
     
 
 /**
@@ -166,13 +163,14 @@ temperature is changed, which how much the gauge is filled-->
             circle.style.transform = 'rotate(0deg)';
         };
     
+        
         /**
          * Updates the fan status based on the received fan status from the server.
          * If the fan status is "on" and the fan is not running, start the fan.
          * If the fan status is "off" and the fan is running, stop the fan.
          * @param {string} fanStatus - The fan status from the server, either "on" or "off".
          */
-        function updateFanStatus(fanStatus) {
+         function updateFanStatus(fanStatus) {
             if (fanStatus !== "on" && fanStatus !== "off") {
             stopFan(); // Default to stop the fan
             }
@@ -242,9 +240,9 @@ temperature is changed, which how much the gauge is filled-->
             fetch('/sendfanemail')
             .then(response => response.json())
             .then(data => {
-                //if (data.fan_status == 'on') {
+                if (data.fan_status) {
                     updateFanStatus(data.fan_status);
-                //}
+                }
             });
         }
 

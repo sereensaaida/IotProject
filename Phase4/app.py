@@ -119,17 +119,16 @@ def check_email_for_yes():
     mail_content = mail_content.lower()
     print(f'Content of latest email: {mail_content}')
 
+
+
     # Check if "yes" is in the content to turn on the fan
     if 'yes' in mail_content:
-        turn_on_fan()
+        turn_on_fan()  # Turn on fan
         return jsonify({'fan_status': 'on'})
-        #global fanRunning
-        #fanRunning = True
-        #time.sleep(3)
-        #fanSpinning = turn_off_fan()
-        #return fanSpinning
 
-    return False
+        return True
+    else:
+        return False
 
 def turn_on_led():
     GPIO.setwarnings(False) # Ignore warning for now
@@ -267,17 +266,15 @@ def send_email_check_for_response():
 
         # Check for a "yes" response in email periodically
         for _ in range(10):  # Check 10 times at 10-second intervals
-            #only read email the first email that the user replies with
+             #only read email the first email that the user replies with
             if emailRead == False:
-                check_email_for_yes()
-                global fanRunning
-                if fanRunning == True:
+                if check_email_for_yes():
                     # Return fan status as "on" if "yes" was received
                     return jsonify({'fan_status': 'on'})
-                    time.sleep(10)
+                time.sleep(10)
 
     # Return fan status as "off" if no "yes" response was found
-    #return jsonify({'fan_status': 'off'})
+    return jsonify({'fan_status': 'off'})
 
 @app.route('/update_user', methods=['POST'])
 def update_user():
